@@ -12,30 +12,23 @@ import net.minecraft.server.level.ServerPlayer
 import java.util.function.Supplier
 
 sealed interface HexMobMessage
-
 sealed interface HexMobMessageC2S : HexMobMessage {
     fun sendToServer() {
         HexMobNetworking.CHANNEL.sendToServer(this)
     }
 }
-
 sealed interface HexMobMessageS2C : HexMobMessage {
     fun sendToPlayer(player: ServerPlayer) {
         HexMobNetworking.CHANNEL.sendToPlayer(player, this)
     }
-
     fun sendToPlayers(players: Iterable<ServerPlayer>) {
         HexMobNetworking.CHANNEL.sendToPlayers(players, this)
     }
 }
-
 sealed interface HexMobMessageCompanion<T : HexMobMessage> {
     val type: Class<T>
-
     fun decode(buf: FriendlyByteBuf): T
-
     fun T.encode(buf: FriendlyByteBuf)
-
     fun apply(msg: T, supplier: Supplier<PacketContext>) {
         val ctx = supplier.get()
         when (ctx.env) {
@@ -55,7 +48,6 @@ sealed interface HexMobMessageCompanion<T : HexMobMessage> {
             }
         }
     }
-
     fun register(channel: NetworkChannel) {
         channel.register(type, { msg, buf -> msg.encode(buf) }, ::decode, ::apply)
     }

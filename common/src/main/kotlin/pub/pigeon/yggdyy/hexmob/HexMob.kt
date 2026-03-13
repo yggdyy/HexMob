@@ -9,13 +9,10 @@ import pub.pigeon.yggdyy.hexmob.registry.HexMobActions
 
 object HexMob {
     const val MODID = "hexmob"
-
     @JvmField
     val LOGGER: Logger = LogManager.getLogger(MODID)
-
     @JvmStatic
     fun id(path: String) = ResourceLocation(MODID, path)
-
     fun init() {
         HexMobServerConfig.init()
         initRegistries(
@@ -23,7 +20,6 @@ object HexMob {
         )
         HexMobNetworking.init()
     }
-
     fun initServer() {
         HexMobServerConfig.initServer()
     }

@@ -10,7 +10,6 @@ fun initRegistries(vararg registries: HexMobRegistrar<*>) {
         initRegistry(registry)
     }
 }
-
 @ExpectPlatform
 fun <T : Any> initRegistry(registrar: HexMobRegistrar<T>) {
     throw AssertionError()

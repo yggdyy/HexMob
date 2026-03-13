@@ -15,12 +15,9 @@ abstract class HexMobRegistrar<T : Any>(
 ) {
     /** Do not access until the mod has been initialized! */
     val registry by lazy(getRegistry)
-
     private var isInitialized = false
-
     private val mutableEntries = mutableSetOf<Entry<out T>>()
     val entries: Set<Entry<out T>> = mutableEntries
-
     open fun init(registerer: (ResourceLocation, T) -> Unit) {
         if (isInitialized) throw IllegalStateException("$this has already been initialized!")
         isInitialized = true
@@ -31,22 +28,17 @@ abstract class HexMobRegistrar<T : Any>(
             initClient()
         }
     }
-
     open fun initClient() {}
-
     fun <V : T> register(name: String, builder: () -> V): Entry<V> = register(HexMob.id(name), builder)
-
     fun <V : T> register(id: ResourceLocation, builder: () -> V): Entry<V> = register(id, lazy {
         if (!isInitialized) throw IllegalStateException("$this has not been initialized!")
         builder()
     })
-
     fun <V : T> register(id: ResourceLocation, lazyValue: Lazy<V>): Entry<V> = Entry(id, lazyValue).also {
         if (!mutableEntries.add(it)) {
             throw IllegalArgumentException("Duplicate id: $id")
         }
     }
-
     open inner class Entry<V : T>(
         val id: ResourceLocation,
         private val lazyValue: Lazy<V>,

@@ -3,64 +3,57 @@
     book: {
       patterns: {
         spells: {
-          dummy_spells: {
+          /*dummy_spells: {
             "": "Dummy Spells",
             congratulate: "Remove an entity from the stack, then congratulate them.",
-          },
+          },*/
         },
         great_spells: {
-          dummy_great_spells: {
+          /*dummy_great_spells: {
             "": "Dummy Great Spells",
             "congratulate/great": "Same as $(l:patterns/spells/dummy_spells#hexmob:congratulate)$(action)Congratulate/$, but as a great spell.",
-          },
+          },*/
         },
       },
     },
   },
-
   hexcasting: {
     action: {
       "hexmob:": {
-        congratulate: "Congratulate Player",
-        "congratulate/great": "Great Congrats!",
+        /*congratulate: "Congratulate Player",
+        "congratulate/great": "Great Congrats!",*/
       },
-
       // use this to add shortened versions of pattern names if the full name won't fit in the ingame book
       // you don't need to add an entry for every pattern - the above value will be used as a default
       book: {
         "hexmob:": {
-          congratulate: "Congratulate",
+          /*congratulate: "Congratulate",*/
         },
       },
     },
   },
-
   text: {
     hexmob: {
-      congrats: "Tell %1$s they're doing a good job!",
+      //congrats: "Tell %1$s they're doing a good job!",
     },
-
     "autoconfig.hexmob": {
       title: "Hex Mob Config",
-
       category: {
         client: "Client",
         server: "Server",
       },
-
       option: {
         client: {
-          dummyClientConfigOption: {
+          /*dummyClientConfigOption: {
             "": "Dummy Client Config Option",
             "@Tooltip": "This is an example of a client-side config option that accepts a boolean.",
-          },
+          },*/
         },
-
         server: {
-          dummyServerConfigOption: {
+          /*dummyServerConfigOption: {
             "": "Dummy Server Config Option",
             "@Tooltip": "This is an example of a server-side config option that accepts an integer.",
-          },
+          },*/
         },
       },
     },

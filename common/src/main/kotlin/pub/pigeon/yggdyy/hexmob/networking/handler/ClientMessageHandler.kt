@@ -9,7 +9,6 @@ fun HexMobMessageS2C.applyOnClient(ctx: PacketContext) = ctx.queue {
         is MsgSyncConfigS2C -> {
             HexMobServerConfig.onSyncConfig(serverConfig)
         }
-
         // add more client-side message handlers here
     }
 }

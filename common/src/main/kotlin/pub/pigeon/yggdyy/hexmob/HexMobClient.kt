@@ -8,7 +8,6 @@ object HexMobClient {
     fun init() {
         HexMobClientConfig.init()
     }
-
     fun getConfigScreen(parent: Screen): Screen {
         return AutoConfig.getConfigScreen(HexMobClientConfig.GlobalConfig::class.java, parent).get()
     }
