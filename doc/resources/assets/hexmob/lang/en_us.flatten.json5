@@ -1,0 +1,8 @@
+{
+  hexdoc: {
+    hexmob: {
+      title: "Hex Mob Book",
+      description: "A addon for Hex Casting adding serveral hex theme mobs.",
+    },
+  }
+}

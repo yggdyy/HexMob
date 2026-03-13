@@ -1,0 +1,54 @@
+modid = "hexmob"
+book = "hexcasting:thehexbook"
+
+resource_dirs = [  # top takes priority
+    "resources",
+    "{$_common.src}/main/resources",
+    { path="{$_common.src}/generated/resources", required=false },
+    "{$_fabric.src}/main/resources",
+    { path="{$_fabric.src}/generated/resources", required=false },
+    "{$_forge.src}/main/resources",
+    { path="{$_forge.src}/generated/resources", required=false },
+    { modid="hexcasting" },
+    { modid="minecraft" },
+    { modid="hexdoc" },
+]
+export_dir = "src/hexdoc_hexmob/_export/generated"
+
+[template]
+icon = "{$_common.src}/main/resources/assets/hexmob/icon.png"
+include = [
+    "hexmob",
+    "hexcasting",
+    "hexdoc",
+]
+
+[template.args]
+mod_name = "Hex Mob"
+author = "yggdyy_"
+show_landing_text = false
+
+[extra.hexcasting]
+# NOTE: "!Raw" means "don't apply variable interpolation to this value"
+_pattern_regex = { "!Raw"='make\("(?P<name>[^"]+)",\s*HexDir\.(?P<startdir>\w+),\s*"(?P<signature>[qweasd]+)"' }
+
+[[extra.hexcasting.pattern_stubs]]
+path = "{$_common.kotlin}/registry/HexMobActions.kt"
+regex = "{^_pattern_regex}"
+
+# platforms
+
+[_common]
+src = "../common/src"
+java = "{src}/main/java/pub/pigeon/yggdyy/hexmob"
+kotlin = "{src}/main/kotlin/pub/pigeon/yggdyy/hexmob"
+
+[_fabric]
+src = "../fabric/src"
+java = "{src}/main/java/pub/pigeon/yggdyy/hexmob/fabric"
+kotlin = "{src}/main/kotlin/pub/pigeon/yggdyy/hexmob/fabric"
+
+[_forge]
+src = "../forge/src"
+java = "{src}/main/java/pub/pigeon/yggdyy/hexmob/forge"
+kotlin = "{src}/main/kotlin/pub/pigeon/yggdyy/hexmob/forge"

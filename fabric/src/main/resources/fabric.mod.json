@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "id": "hexmob",
+  "version": "${version}",
+  "name": "Hex Mob",
+  "description": "A addon for Hex Casting adding serveral hex theme mobs.",
+  "authors": [
+    "yggdyy_"
+  ],
+  "contact": {
+    "homepage": "https://yggdyy.github.io/HexMob",
+    "sources": "https://github.com/yggdyy/HexMob"
+  },
+  "license": "MIT",
+  "icon": "assets/hexmob/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [{
+      "adapter": "kotlin",
+      "value": "pub.pigeon.yggdyy.hexmob.fabric.FabricHexMob"
+    }],
+    "client": [{
+      "adapter": "kotlin",
+      "value": "pub.pigeon.yggdyy.hexmob.fabric.FabricHexMobClient"
+    }],
+    "server": [{
+      "adapter": "kotlin",
+      "value": "pub.pigeon.yggdyy.hexmob.fabric.FabricHexMobServer"
+    }],
+    "fabric-datagen": [{
+      "adapter": "kotlin",
+      "value": "pub.pigeon.yggdyy.hexmob.fabric.datagen.FabricHexMobDatagen"
+    }],
+    "modmenu": [{
+      "adapter": "kotlin",
+      "value": "pub.pigeon.yggdyy.hexmob.fabric.FabricHexMobModMenu"
+    }]
+  },
+  "mixins": [
+    "hexmob-common.mixins.json",
+    "hexmob-fabric.mixins.json"
+  ],
+  "depends": {
+    "minecraft": "${versions.minecraft}",
+    "fabricloader": ">=${versions.fabric_loader}",
+    "fabric-api": ">=${versions.fabric_api}",
+    "fabric-language-kotlin": ">=${versions.kotlin_fabric}",
+    "architectury": ">=${versions.architectury}",
+    "hexcasting": ">=${versions.hexcasting}",
+    "cloth-config": ">=${versions.clothConfig}"
+  },
+  "suggests": {
+    "modmenu": ">=${versions.modMenu}"
+  }
+}

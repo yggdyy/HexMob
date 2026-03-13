@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "package": "pub.pigeon.yggdyy.hexmob.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "minVersion": "0.8",
+  "client": [
+  ],
+  "mixins": [
+    "MixinDatagenMain"
+  ],
+  "plugin": "pub.pigeon.yggdyy.hexmob.mixin.HexMobMixinConfigPlugin",
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
