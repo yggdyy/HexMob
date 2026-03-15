@@ -6,7 +6,7 @@
   "client": [
   ],
   "mixins": [
-    "MixinDatagenMain"
+    "GeodeFeatureMixin"
   ],
   "plugin": "pub.pigeon.yggdyy.hexmob.mixin.HexMobMixinConfigPlugin",
   "injectors": {

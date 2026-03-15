@@ -1,5 +1,6 @@
 package pub.pigeon.yggdyy.hexmob.config
 
+import at.petrak.hexcasting.api.misc.MediaConstants
 import dev.architectury.event.events.common.PlayerEvent
 import me.shedaniel.autoconfig.AutoConfig
 import me.shedaniel.autoconfig.ConfigData
@@ -53,11 +54,23 @@ object HexMobServerConfig {
         var dummyServerConfigOption: Int = 64
             private set
          */
+        @Tooltip
+        var opTransformStimulatedPatternCost: Long = MediaConstants.DUST_UNIT * 10
+        @Tooltip
+        var opStimulatedSlateMediaDiscount: Double = 0.1
+        @Tooltip
+        var stimulatedSlateBlacklist: MutableList<String> = mutableListOf()
+        @Tooltip
+        var stimulatedPatternSpawnRate: Double = 0.5
         fun encode(buf: FriendlyByteBuf) {
-
+            buf.writeLong(opTransformStimulatedPatternCost)
+            buf.writeDouble(opStimulatedSlateMediaDiscount)
+            buf.writeDouble(stimulatedPatternSpawnRate)
         }
         fun decode(buf: FriendlyByteBuf): ServerConfig {
-
+            opTransformStimulatedPatternCost = buf.readVarLong()
+            opStimulatedSlateMediaDiscount = buf.readDouble()
+            stimulatedPatternSpawnRate = buf.readDouble()
             return this
         }
     }

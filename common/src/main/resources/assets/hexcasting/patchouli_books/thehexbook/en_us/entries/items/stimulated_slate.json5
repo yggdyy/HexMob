@@ -1,0 +1,17 @@
+{
+  name: "block.hexmob.stimulated_slate",
+  category: "hexcasting:items",
+  icon: "hexmob:stimulated_slate",
+  advancement: "hexcasting:root",
+  pages: [
+    {
+      "type": "patchouli:text",
+      "text": "hexmob.book.items.stimulated_slate.0"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "hexmob:stimulated_slate",
+      "text": "hexmob.book.items.stimulated_slate.1"
+    }
+  ],
+}

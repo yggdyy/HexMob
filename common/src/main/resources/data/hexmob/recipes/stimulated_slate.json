@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "aaa",
+    "asa",
+    "aaa"
+  ],
+  "key": {
+    "a": {
+      "item": "hexcasting:amethyst_dust"
+    },
+    "s": {
+      "item": "hexcasting:slate"
+    }
+  },
+  "result": {
+    "item": "hexmob:stimulated_slate",
+    "count": 1
+  }
+}

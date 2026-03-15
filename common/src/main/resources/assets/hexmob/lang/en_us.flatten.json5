@@ -7,6 +7,11 @@
             "": "Dummy Spells",
             congratulate: "Remove an entity from the stack, then congratulate them.",
           },*/
+          "transform_stimulated_pattern": {
+            "": "Transform Stimulated Pattern",
+            "0": "Accept the position of a $(l:hexcasting:items/stimulated_slate)stimulated slate$(/l), a $(l:hexcasting:hexmob/stimulated_pattern)stimulated pattern entity$(/l) and a pattern. Try to transform the stimulated pattern entity into the stimulated slate. Cost 10 amethyst dust",
+            "1": "If the given pattern has the save stroke as the pattern of the stimulated pattern entity, the entity will discard and the stimulated slate will be written with the very pattern. Otherwise, the entity will lose with 5 heath point while nothing other happen."
+          }
         },
         great_spells: {
           /*dummy_great_spells: {
@@ -15,6 +20,21 @@
           },*/
         },
       },
+      "items": {
+        "stimulated_slate": {
+          "0": "A stimulated slate looks like a normal slate but actually very different.$(br)Firstly, except written through $(l:hexcasting:patterns/spells/transform_stimulated_pattern)this pattern$(/l), the pattern on it can not be changed. Then, if be a part of a spell circle like normal slates and have a pattern written on it, a stimulated slate will simply allow the media wave pass through without any execution but provide a 10% media discount for following executions.",
+          "1": "A mishap will occurred if a circle has two stimulated slate with the same pattern stroke. And there may be some patterns the media discount can't apply, which may be the preserve of nature.",
+        },
+      },
+      "hexmob": {
+        "name": "Amazing Mobs",
+        "description": "This category contains the records of amazing mobs I collected from all over the world.",
+        "stimulated_pattern": {
+          "": "Stimulated Pattern",
+          "0": "A stimulated pattern is a magical creature that appears like a hex pattern floating in the air. Those friendly creatures can be seen in some amethyst geode. $(br)A hexer called Whiteord conducted several researches on them and the discovers can be seen at $(l:hexcasting:items/stimulated_slate)Stimulated Slate$(/l) and $(l:hexcasting:patterns/spells/transform_stimulated_pattern)Transform Stimulated Pattern$(/l).",
+          "1": "A stimulated pattern in a amethyst geode."
+        }
+      }
     },
   },
   hexcasting: {
@@ -22,6 +42,7 @@
       "hexmob:": {
         /*congratulate: "Congratulate Player",
         "congratulate/great": "Great Congrats!",*/
+        "transform_stimulated_pattern": "Transform Stimulated Pattern"
       },
       // use this to add shortened versions of pattern names if the full name won't fit in the ingame book
       // you don't need to add an entry for every pattern - the above value will be used as a default
@@ -31,6 +52,11 @@
         },
       },
     },
+  },
+  "mishap": {
+    "hexmob": {
+      "duplicate_stimulated_slate": "Encountered duplicate stimulated slate pattern!"
+    }
   },
   text: {
     hexmob: {
@@ -58,4 +84,18 @@
       },
     },
   },
+  "block": {
+    "hexmob": {
+      "stimulated_slate":{
+        "": "Stimulated Slate",
+        "written": "Written Stimulated Slate",
+        "blank": "Blank Stimulated Slate"
+      }
+    }
+  },
+  "entity": {
+    "hexmob": {
+      "stimulated_pattern": "Stimulated Pattern"
+    }
+  }
 }

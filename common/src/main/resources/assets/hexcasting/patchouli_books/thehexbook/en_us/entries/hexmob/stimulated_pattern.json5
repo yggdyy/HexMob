@@ -1,0 +1,17 @@
+{
+  name: "hexmob.book.hexmob.stimulated_pattern",
+  category: "hexcasting:hexmob",
+  icon: "minecraft:amethyst_cluster",
+  advancement: "hexcasting:root",
+  pages: [
+    {
+      "type": "patchouli:text",
+      "text": "hexmob.book.hexmob.stimulated_pattern.0"
+    },
+    {
+      "type": "patchouli:image",
+      "images": ["hexmob:textures/gui/entries/hexmob/stimulated_pattern.png"],
+      "text": "hexmob.book.hexmob.stimulated_pattern.1"
+    }
+  ],
+}

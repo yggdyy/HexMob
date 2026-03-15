@@ -27,10 +27,6 @@
       "adapter": "kotlin",
       "value": "pub.pigeon.yggdyy.hexmob.fabric.FabricHexMobServer"
     }],
-    "fabric-datagen": [{
-      "adapter": "kotlin",
-      "value": "pub.pigeon.yggdyy.hexmob.fabric.datagen.FabricHexMobDatagen"
-    }],
     "modmenu": [{
       "adapter": "kotlin",
       "value": "pub.pigeon.yggdyy.hexmob.fabric.FabricHexMobModMenu"
