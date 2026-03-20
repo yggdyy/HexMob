@@ -3,11 +3,15 @@ package pub.pigeon.yggdyy.hexmob.content.stimulated_pattern
 import at.petrak.hexcasting.api.casting.math.HexDir
 import at.petrak.hexcasting.api.casting.math.HexPattern
 import at.petrak.hexcasting.common.lib.hex.HexActions
+import net.minecraft.core.BlockPos
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.syncher.EntityDataAccessor
 import net.minecraft.network.syncher.EntityDataSerializers
 import net.minecraft.network.syncher.SynchedEntityData
+import net.minecraft.sounds.SoundEvent
+import net.minecraft.sounds.SoundEvents
 import net.minecraft.world.DifficultyInstance
+import net.minecraft.world.damagesource.DamageSource
 import net.minecraft.world.entity.*
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier
 import net.minecraft.world.entity.ai.goal.Goal
@@ -48,33 +52,36 @@ class StimulatedPatternEntity(type: EntityType<StimulatedPatternEntity>, level: 
         spawnData: SpawnGroupData?,
         dataTag: CompoundTag?
     ): SpawnGroupData? {
-        val ret = super.finalizeSpawn(level, difficulty, reason, spawnData, dataTag)
-        setPattern(HexActions.REGISTRY.getRandom(getRandom()).get().value().prototype)
         isNoGravity = true
-        return ret
+        return super.finalizeSpawn(level, difficulty, reason, spawnData, dataTag)
+    }
+    override fun tick() {
+        super.tick()
+        if(tickCount < 10 && !level().isClientSide && getPattern().angles.size <= 0) {
+            setPattern(HexActions.REGISTRY.getRandom(getRandom()).get().value().prototype)
+        }
     }
     override fun registerGoals() {
         super.registerGoals()
         goalSelector.addGoal(16, RandomMoveGoal(this))
     }
+    override fun getHurtSound(damageSource: DamageSource): SoundEvent = SoundEvents.AMETHYST_CLUSTER_HIT
     companion object {
         val PATTERN: EntityDataAccessor<CompoundTag> = SynchedEntityData.defineId(StimulatedPatternEntity::class.java, EntityDataSerializers.COMPOUND_TAG)
         val PATTERN_KEY: String = HexMob.id("pattern").toString()
         fun registerAttributes(): AttributeSupplier.Builder {
             return Mob.createMobAttributes()
         }
-        fun spawnInGeode(context: FeaturePlaceContext<GeodeConfiguration>) {
+        fun spawnInGeode(context: FeaturePlaceContext<GeodeConfiguration>, sugPos: BlockPos) {
             val entity = StimulatedPatternEntity(STIMULATED_PATTERN.get(), context.level().level)
-            val offset: Double = (context.config().outerWallDistance.minValue + context.config().outerWallDistance.maxValue) / 2.0
-            entity.setPos(context.origin().center.add(offset, offset, offset))
-            entity.finalizeSpawn(
-                context.level().level,
-                context.level().getCurrentDifficultyAt(context.origin()),
-                MobSpawnType.CHUNK_GENERATION,
-                null,
-                null
-            )
-            context.level().level.addFreshEntity(entity)
+            for(i in 0..10) {
+                val now: BlockPos = sugPos.offset(0, i, 0)
+                if(context.level().getBlockState(now).isAir && !context.level().getBlockState(now.above()).isAir) {
+                    entity.setPos(now.center.add(0.0, -0.5, 0.0))
+                    context.level().level.addFreshEntity(entity)
+                    return
+                }
+            }
         }
         private class RandomMoveGoal(val mob: FlyingMob, val interval: Int = 40): Goal() {
             init {

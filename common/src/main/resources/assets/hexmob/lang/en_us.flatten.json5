@@ -33,6 +33,11 @@
           "": "Stimulated Pattern",
           "0": "A stimulated pattern is a magical creature that appears like a hex pattern floating in the air. Those friendly creatures can be seen in some amethyst geode. $(br)A hexer called Whiteord conducted several researches on them and the discovers can be seen at $(l:hexcasting:items/stimulated_slate)Stimulated Slate$(/l) and $(l:hexcasting:patterns/spells/transform_stimulated_pattern)Transform Stimulated Pattern$(/l).",
           "1": "A stimulated pattern in a amethyst geode."
+        },
+        "crying_amethyst": {
+          "": "Crying Amethyst",
+          "0": "These mysterious animals (I am not sure whether they are really \"animals\"), firstly recorded by hexer cang_hai_yi_su, sometimes appear in amethyst geodes, looks just like a budding amethyst and a amethyst bud on which, have no threaten but will drop some amethyst when killed.$(br)If hit, a crying amethyst may cry out like a ghast. What a horrible sound, I wonder what have those things undergone...",
+          "1": "A crying amethyst in a geode."
         }
       }
     },
@@ -95,7 +100,8 @@
   },
   "entity": {
     "hexmob": {
-      "stimulated_pattern": "Stimulated Pattern"
+      "stimulated_pattern": "Stimulated Pattern",
+      "crying_amethyst": "Crying Amethyst"
     }
   }
 }

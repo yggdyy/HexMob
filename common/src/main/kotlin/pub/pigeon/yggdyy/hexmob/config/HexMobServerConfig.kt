@@ -62,6 +62,8 @@ object HexMobServerConfig {
         var stimulatedSlateBlacklist: MutableList<String> = mutableListOf()
         @Tooltip
         var stimulatedPatternSpawnRate: Double = 0.5
+        @Tooltip
+        var cryingAmethystSpawnRate: Double = 0.5
         fun encode(buf: FriendlyByteBuf) {
             buf.writeLong(opTransformStimulatedPatternCost)
             buf.writeDouble(opStimulatedSlateMediaDiscount)

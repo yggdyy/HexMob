@@ -6,6 +6,7 @@ import net.minecraft.core.registries.Registries
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.MobCategory
 import pub.pigeon.yggdyy.hexmob.HexMob
+import pub.pigeon.yggdyy.hexmob.content.crying_amethyst.CryingAmethystEntity
 import pub.pigeon.yggdyy.hexmob.content.stimulated_pattern.StimulatedPatternEntity
 
 object HexMobEntities {
@@ -19,5 +20,11 @@ object HexMobEntities {
             { type, level -> StimulatedPatternEntity(type, level) },
             MobCategory.CREATURE
         ).sized(1F, 1F).build("stimulated_pattern")
+    }
+    val CRYING_AMETHYST: DeferredSupplier<EntityType<CryingAmethystEntity>> = ENTITIES.register("crying_amethyst") {
+        EntityType.Builder.of(
+            {type, level -> CryingAmethystEntity(type, level)},
+            MobCategory.CREATURE
+        ).sized(1F, 1F).build("crying_amethyst")
     }
 }

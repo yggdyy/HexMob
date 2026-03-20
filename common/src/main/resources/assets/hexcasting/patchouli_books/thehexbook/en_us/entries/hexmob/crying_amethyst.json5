@@ -1,0 +1,17 @@
+{
+  name: "hexmob.book.hexmob.crying_amethyst",
+  category: "hexcasting:hexmob",
+  icon: "minecraft:budding_amethyst",
+  advancement: "hexcasting:root",
+  pages: [
+    {
+      "type": "patchouli:text",
+      "text": "hexmob.book.hexmob.crying_amethyst.0"
+    },
+    {
+      "type": "patchouli:image",
+      "images": ["hexmob:textures/gui/entries/hexmob/crying_amethyst.png"],
+      "text": "hexmob.book.hexmob.crying_amethyst.1"
+    }
+  ],
+}

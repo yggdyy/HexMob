@@ -1,3 +1,5 @@
+import java.net.URI
+
 plugins {
     id("hexmob.platform")
 }
@@ -20,6 +22,21 @@ loom {
         named("datagen") {
             property("hexmob.apply-datagen-mixin", "true")
         }
+    }
+}
+
+repositories {
+    maven {
+        name = "GeckoLib"
+        url = URI.create("https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/")
+        content {
+            includeGroupByRegex("software\\.bernie.*")
+            includeGroup("com.eliotlash.mclib")
+        }
+    }
+    maven {
+        name = "Modrinth"
+        url = URI.create("https://api.modrinth.com/maven")
     }
 }
 
@@ -81,4 +98,7 @@ dependencies {
         exclude(group = "net.fabricmc.fabric-api")
     }
     modImplementation(libs.modMenu)
+
+    //modImplementation("software.bernie.geckolib:geckolib-fabric-1.20.1:4.8.2")
+    //modImplementation("com.eliotlash.mclib:mclib:20")
 }
