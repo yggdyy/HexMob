@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:amethyst_block",
+    "hexcasting:edified_planks",
+    "hexmob:infested_edified_planks",
+    "hexcasting:edified_tile",
+    "hexmob:infested_edified_tile"
+  ]
+}

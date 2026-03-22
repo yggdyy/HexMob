@@ -73,14 +73,18 @@ class StimulatedPatternEntity(type: EntityType<StimulatedPatternEntity>, level: 
             return Mob.createMobAttributes()
         }
         fun spawnInGeode(context: FeaturePlaceContext<GeodeConfiguration>, sugPos: BlockPos) {
-            val entity = StimulatedPatternEntity(STIMULATED_PATTERN.get(), context.level().level)
-            for(i in 0..10) {
-                val now: BlockPos = sugPos.offset(0, i, 0)
-                if(context.level().getBlockState(now).isAir && !context.level().getBlockState(now.above()).isAir) {
-                    entity.setPos(now.center.add(0.0, -0.5, 0.0))
-                    context.level().level.addFreshEntity(entity)
-                    return
+            try {
+                val entity = StimulatedPatternEntity(STIMULATED_PATTERN.get(), context.level().level)
+                for (i in 0..10) {
+                    val now: BlockPos = sugPos.offset(0, i, 0)
+                    if (context.level().getBlockState(now).isAir && !context.level().getBlockState(now.above()).isAir) {
+                        entity.setPos(now.center.add(0.0, -0.5, 0.0))
+                        context.level().level.addFreshEntity(entity)
+                        return
+                    }
                 }
+            } catch (ignored: Exception) {
+
             }
         }
         private class RandomMoveGoal(val mob: FlyingMob, val interval: Int = 40): Goal() {

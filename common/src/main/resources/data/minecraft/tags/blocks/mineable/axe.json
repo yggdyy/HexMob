@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "hexmob:infested_edified_planks",
+    "hexmob:infested_edified_panel",
+    "hexmob:infested_edified_tile"
+  ]
+}

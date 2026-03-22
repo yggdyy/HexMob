@@ -20,14 +20,18 @@ class CryingAmethystEntity(entityType: EntityType<CryingAmethystEntity>, level: 
     companion object {
         fun registerAttributes(): AttributeSupplier.Builder = createMobAttributes().add(Attributes.MAX_HEALTH, 10.0)
         fun spawnInGeode(context: FeaturePlaceContext<GeodeConfiguration>, sugPos: BlockPos) {
-            val entity = CryingAmethystEntity(HexMobEntities.CRYING_AMETHYST.get(), context.level().level)
-            for(i in 0..10) {
-                val now: BlockPos = sugPos.offset(0, -i, 0)
-                if(context.level().getBlockState(now).isAir && !context.level().getBlockState(now.below()).isAir) {
-                    entity.setPos(now.center.add(0.0, -0.5, 0.0))
-                    context.level().level.addFreshEntity(entity)
-                    return
+            try {
+                val entity = CryingAmethystEntity(HexMobEntities.CRYING_AMETHYST.get(), context.level().level)
+                for (i in 0..10) {
+                    val now: BlockPos = sugPos.offset(0, -i, 0)
+                    if (context.level().getBlockState(now).isAir && !context.level().getBlockState(now.below()).isAir) {
+                        entity.setPos(now.center.add(0.0, -0.5, 0.0))
+                        context.level().level.addFreshEntity(entity)
+                        return
+                    }
                 }
+            } catch (ignored: Exception) {
+
             }
         }
     }

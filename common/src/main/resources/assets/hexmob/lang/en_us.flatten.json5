@@ -95,13 +95,17 @@
         "": "Stimulated Slate",
         "written": "Written Stimulated Slate",
         "blank": "Blank Stimulated Slate"
-      }
+      },
+      "infested_edified_planks": "Infested Edified Planks",
+      "infested_edified_panel": "Infested Edified Panel",
+      "infested_edified_tile": "Infested Edified Tile",
     }
   },
   "entity": {
     "hexmob": {
       "stimulated_pattern": "Stimulated Pattern",
-      "crying_amethyst": "Crying Amethyst"
+      "crying_amethyst": "Crying Amethyst",
+      "amethyst_silverfish": "Amethyst Silverfish"
     }
   }
 }

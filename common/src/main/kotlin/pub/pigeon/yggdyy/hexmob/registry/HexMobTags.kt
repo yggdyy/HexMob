@@ -9,5 +9,6 @@ object HexMobTags {
     object BlockTags {
         private fun make(id: String): TagKey<Block> = TagKey.create(Registries.BLOCK, HexMob.id(id))
         val GEODE_WALL: TagKey<Block> = make("geode_wall")
+        val AKASHIC_LIBRARY_WALL: TagKey<Block> = make("akashic_library_wall")
     }
 }

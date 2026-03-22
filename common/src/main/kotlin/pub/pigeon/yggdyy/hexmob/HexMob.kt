@@ -26,6 +26,7 @@ object HexMob {
         HexMobEntities.init()
         HexMobNetworking.init()
         HexMobEntityAttributes.init()
+        HexMobStructurePieceTypes.init()
         CastingEnvironment.addCreateEventListener{env, data -> StimulatedSlateBlock.applyMediaDiscount(env, data)}
     }
     fun initServer() {

@@ -6,7 +6,10 @@
   "client": [
   ],
   "mixins": [
-    "GeodeFeatureMixin"
+    "BlockSconceMixin",
+    "GeodeFeatureMixin",
+    "StrongholdPieces$LibraryAccessor",
+    "StrongholdPiecesMixin"
   ],
   "plugin": "pub.pigeon.yggdyy.hexmob.mixin.HexMobMixinConfigPlugin",
   "injectors": {
