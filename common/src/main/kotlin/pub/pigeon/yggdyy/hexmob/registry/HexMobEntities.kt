@@ -9,6 +9,7 @@ import pub.pigeon.yggdyy.hexmob.HexMob
 import pub.pigeon.yggdyy.hexmob.content.amethyst_silverfish.AmethystSilverfishEntity
 import pub.pigeon.yggdyy.hexmob.content.crying_amethyst.CryingAmethystEntity
 import pub.pigeon.yggdyy.hexmob.content.stimulated_pattern.StimulatedPatternEntity
+import pub.pigeon.yggdyy.hexmob.content.ur_circle.UrCircleEntity
 
 object HexMobEntities {
     fun init() {
@@ -33,5 +34,11 @@ object HexMobEntities {
             {type, level -> AmethystSilverfishEntity(type, level)},
             MobCategory.MONSTER
         ).sized(0.375F, 0.25F).build("amethyst_silverfish")
+    }
+    val UR_CIRCLE: DeferredSupplier<EntityType<UrCircleEntity>> = ENTITIES.register("ur_circle") {
+        EntityType.Builder.of(
+            {type, level -> UrCircleEntity(type, level)},
+            MobCategory.MISC
+        ).sized(10F, 6F).build("ur_circle")
     }
 }
