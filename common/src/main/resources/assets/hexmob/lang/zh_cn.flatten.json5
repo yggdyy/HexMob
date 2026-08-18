@@ -1,0 +1,61 @@
+{
+  // Hex Mob 中文本地化（zh_cn）
+  hexmob: {
+    book: {
+      hexmob: {
+        "name": "奇妙的生物",
+        "description": "此分类收录了我在世界各地收集到的奇妙生物记录。",
+        "stimulated_pattern": {
+          "": "活化图案",
+          "0": "活化图案是一种神秘的生灵，看起来就像悬浮在半空中的一个咒法图案。这些友善的生灵可以在某些紫水晶晶洞中见到。$(br)一位名叫 Whiteord 的咒术师对它们进行过几番研究，其发现可用于制作$(l:hexcasting:items/stimulated_slate)活化石板$(/l)与$(l:hexcasting:patterns/spells/transform_stimulated_pattern)转化活化图案$(/l)。",
+          "1": "紫水晶晶洞中的一只活化图案。"
+        },
+        "crying_amethyst": {
+          "": "尖叫紫水晶",
+          "0": "这些神秘的生物（我也不敢确定它们究竟算不算\u201c生物\u201d），最初由咒术师 cang_hai_yi_su 记录，偶尔现身于紫水晶晶洞。它看起来就像一株上面长着紫水晶芽的萌芽紫水晶，没有威胁；但被杀死时会掉落一些紫水晶。$(br)若是受到攻击，尖叫紫水晶可能会像恶魂一般嚎叫。那声音真叫人毛骨悚然，我不禁好奇它们究竟经历过什么……",
+          "1": "晶洞中的一只尖叫紫水晶。"
+        },
+        "iota_sheep": {
+          "": "咒念羊",
+          "0": "这些古怪的羊时常出没于原野的边缘，每一只都把某个 Iota 系进了羊毛里。羊毛的颜色会随其承载的 Iota 类型而流转，而剪下羊毛，便能得到几枚$(l:hexcasting:items/thought_knot)结念绳$(/l)，每一枚都复写了一份那个iota。咒念羊可以用$(action)编年史家之纯化$()和$(action)编年史家之策略$()读写。",
+          "1": "那 iota 可不只是装饰——羊会照它所承载的意志行事。向量Iota会让它慢慢的朝那一点踱去；一枚实体Iota则让它不由自主地靠近那生灵；向量列表会叫它化身为小小巡哨，在列表规定的几个向量处反复巡游；若是别的列表，则只是让羊毛的颜色周而复始地轮转。$(br2)如今已有咒术师习惯于往羊身上托付 Iota，只为看它们如何一边“咩咩”叫着，一边不由自主地做着蠢事。"
+        }
+      }
+    }
+  },
+  hexcasting: {
+    action: {
+      "hexmob:": {
+        "transform_stimulated_pattern": "转化活化图案"
+      }
+    }
+  },
+  "entity": {
+    "hexmob": {
+      "stimulated_pattern": "活化图案",
+      "crying_amethyst": "尖叫紫水晶",
+      "amethyst_silverfish": "紫水晶蠹虫",
+      "iota_sheep": "咒念羊"
+    }
+  },
+  "item": {
+    "hexmob": {
+      "iota_sheep_spawn_egg": "咒念羊刷怪蛋"
+    }
+  },
+  "itemGroup": {
+    "hexmob": "咒法生物"
+  },
+  "block": {
+    "hexmob": {
+      "stimulated_slate": {
+        "": "活化石板",
+        "written": "已写入的活化石板",
+        "blank": "空白活化石板"
+      },
+      "infested_edified_planks": "被侵染的启迪木板",
+      "infested_edified_panel": "被侵染的启迪面板",
+      "infested_edified_tile": "被侵染的启迪瓦"
+    }
+  }
+}

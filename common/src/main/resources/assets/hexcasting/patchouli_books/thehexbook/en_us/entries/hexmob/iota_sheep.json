@@ -1,0 +1,16 @@
+{
+  "name": "hexmob.book.hexmob.iota_sheep",
+  "category": "hexcasting:hexmob",
+  "icon": "hexmob:iota_sheep_spawn_egg",
+  "advancement": "hexcasting:root",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "hexmob.book.hexmob.iota_sheep.0"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "hexmob.book.hexmob.iota_sheep.1"
+    }
+  ]
+}

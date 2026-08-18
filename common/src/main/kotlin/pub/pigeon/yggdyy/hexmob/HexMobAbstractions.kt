@@ -2,15 +2,17 @@
 
 package pub.pigeon.yggdyy.hexmob
 
-import dev.architectury.injectables.annotations.ExpectPlatform
-import pub.pigeon.yggdyy.hexmob.registry.HexMobRegistrar
-
-fun initRegistries(vararg registries: HexMobRegistrar<*>) {
-    for (registry in registries) {
-        initRegistry(registry)
-    }
-}
-@ExpectPlatform
-fun <T : Any> initRegistry(registrar: HexMobRegistrar<T>) {
-    throw AssertionError()
-}
+/*
+ * Hex-action (and other game-content) registration is intentionally NOT wired
+ * through @ExpectPlatform here anymore.
+ *
+ * The common @ExpectPlatform stub's body was not being replaced at runtime in
+ * this Architectury/Kotlin setup (the transformer that swaps in the platform
+ * implementation never ran), so calling it just hit `throw AssertionError()`.
+ *
+ * Instead each platform entrypoint calls its own local implementation directly:
+ *   - Fabric: FabricHexMob -> initRegistry(HexMobActions)
+ *          (pub.pigeon.yggdyy.hexmob.fabric.HexMobAbstractionsImpl)
+ *   - Forge:  ForgeHexMob    -> initRegistry(HexMobActions)
+ *          (pub.pigeon.yggdyy.hexmob.forge.HexMobAbstractionsImpl)
+ */

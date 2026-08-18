@@ -4,6 +4,7 @@ import dev.architectury.registry.client.level.entity.EntityRendererRegistry
 import pub.pigeon.yggdyy.hexmob.HexMob
 import pub.pigeon.yggdyy.hexmob.content.amethyst_silverfish.AmethystSilverfishRenderer
 import pub.pigeon.yggdyy.hexmob.content.crying_amethyst.CryingAmethystRenderer
+import pub.pigeon.yggdyy.hexmob.content.iota_sheep.IotaSheepRenderer
 import pub.pigeon.yggdyy.hexmob.content.stimulated_pattern.StimulatedPatternEntityRenderer
 import pub.pigeon.yggdyy.hexmob.content.ur_circle.UrCircleRenderer
 
@@ -14,5 +15,6 @@ object HexMobEntityRenderers {
         EntityRendererRegistry.register(HexMobEntities.CRYING_AMETHYST) { context -> CryingAmethystRenderer(context) }
         EntityRendererRegistry.register(HexMobEntities.AMETHYST_SILVERFISH) { context -> AmethystSilverfishRenderer(context) }
         EntityRendererRegistry.register(HexMobEntities.UR_CIRCLE) { context -> UrCircleRenderer(context) }
+        EntityRendererRegistry.register(HexMobEntities.IOTA_SHEEP) { context -> IotaSheepRenderer(context) }
     }
 }

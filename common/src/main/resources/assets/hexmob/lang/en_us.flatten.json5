@@ -38,6 +38,11 @@
           "": "Crying Amethyst",
           "0": "These mysterious animals (I am not sure whether they are really \"animals\"), firstly recorded by hexer cang_hai_yi_su, sometimes appear in amethyst geodes, looks just like a budding amethyst and a amethyst bud on which, have no threaten but will drop some amethyst when killed.$(br)If hit, a crying amethyst may cry out like a ghast. What a horrible sound, I wonder what have those things undergone...",
           "1": "A crying amethyst in a geode."
+        },
+        "iota_sheep": {
+          "": "Iota Sheep",
+          "0": "These odd sheep frequent the edges of fields, each carrying a single iota knotted into its fleece. The colour of the wool shifts with the type of iota it holds, and shearing one yields a few $(l:hexcasting:items/thought_knot)Thought-Knots$(/l), each holding a copy of that iota.",
+          "1": "The iota isn't merely decoration — the sheep obeys what it stores. A vector sets it wandering toward that point; an entity makes it trail that creature; a list of vectors turns it into a little patrol; any other list simply cycles the colour of its wool. Hexers have taken to leaving iotas on these sheep just to watch them steer."
         }
       }
     },
@@ -105,7 +110,16 @@
     "hexmob": {
       "stimulated_pattern": "Stimulated Pattern",
       "crying_amethyst": "Crying Amethyst",
-      "amethyst_silverfish": "Amethyst Silverfish"
+      "amethyst_silverfish": "Amethyst Silverfish",
+      "iota_sheep": "Iota Sheep"
     }
+  },
+  "item": {
+    "hexmob": {
+      "iota_sheep_spawn_egg": "Iota Sheep Spawn Egg"
+    }
+  },
+  "itemGroup": {
+    "hexmob": "Hex Mob"
   }
 }

@@ -8,6 +8,7 @@ import net.minecraft.world.entity.MobCategory
 import pub.pigeon.yggdyy.hexmob.HexMob
 import pub.pigeon.yggdyy.hexmob.content.amethyst_silverfish.AmethystSilverfishEntity
 import pub.pigeon.yggdyy.hexmob.content.crying_amethyst.CryingAmethystEntity
+import pub.pigeon.yggdyy.hexmob.content.iota_sheep.IotaSheepEntity
 import pub.pigeon.yggdyy.hexmob.content.stimulated_pattern.StimulatedPatternEntity
 import pub.pigeon.yggdyy.hexmob.content.ur_circle.UrCircleEntity
 
@@ -40,5 +41,11 @@ object HexMobEntities {
             {type, level -> UrCircleEntity(type, level)},
             MobCategory.MISC
         ).sized(10F, 6F).build("ur_circle")
+    }
+    val IOTA_SHEEP: DeferredSupplier<EntityType<IotaSheepEntity>> = ENTITIES.register("iota_sheep") {
+        EntityType.Builder.of(
+            { type, level -> IotaSheepEntity(type, level) },
+            MobCategory.CREATURE
+        ).sized(0.9F, 1.3F).build("iota_sheep")
     }
 }

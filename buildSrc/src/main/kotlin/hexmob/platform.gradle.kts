@@ -44,6 +44,29 @@ configurations {
     }
 }
 
+if (platform == "fabric") {
+    // GeckoLib 4.8.2 (and architectury-injectables' `net.fabricmc:fabric-loader:+`
+    // wildcard) drag fabric-loader up once those jars land in the shared Gradle
+    // cache. The 1.20.1 stack's fabric-api here now resolves to 0.92.6+1.20.1 and
+    // GeckoLib 4.8.2, which both hard-require fabric-loader >= 0.16.10.
+    //
+    // fabric-loader 0.16.10 itself needs a sponge-mixin with the JAVA_22
+    // CompatibilityLevel (mixin 0.8.7), but plain resolution leaves in the old
+    // 1.20.1-era sponge-mixin 0.12.5 (no JAVA_22) -> NoSuchFieldError on boot.
+    // Pin both so the stack stays coherent and the `+` wildcards can't float a
+    // 1.21-era loader on top of old mixin again.
+    configurations.configureEach {
+        resolutionStrategy.eachDependency {
+            if (requested.group == "net.fabricmc" && requested.name == "fabric-loader") {
+                useVersion("0.16.10")
+            }
+            if (requested.group == "net.fabricmc" && requested.name == "sponge-mixin") {
+                useVersion("0.15.2+mixin.0.8.7")
+            }
+        }
+    }
+}
+
 dependencies {
     "common"(project(":common", "namedElements")) { isTransitive = false }
     "shadowCommon"(project(":common", "transformProduction$platformCapitalized")) { isTransitive = false }

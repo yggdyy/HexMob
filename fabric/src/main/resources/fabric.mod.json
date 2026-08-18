@@ -30,6 +30,10 @@
     "modmenu": [{
       "adapter": "kotlin",
       "value": "pub.pigeon.yggdyy.hexmob.fabric.FabricHexMobModMenu"
+    }],
+    "cardinal-components-entity": [{
+      "adapter": "kotlin",
+      "value": "pub.pigeon.yggdyy.hexmob.fabric.HexMobCardinalComponents"
     }]
   },
   "mixins": [
@@ -43,7 +47,8 @@
     "fabric-language-kotlin": ">=${versions.kotlin_fabric}",
     "architectury": ">=${versions.architectury}",
     "hexcasting": ">=${versions.hexcasting}",
-    "cloth-config": ">=${versions.clothConfig}"
+    "cloth-config": ">=${versions.clothConfig}",
+    "geckolib": "*"
   },
   "suggests": {
     "modmenu": ">=${versions.modMenu}"

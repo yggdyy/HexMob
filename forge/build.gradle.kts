@@ -104,8 +104,8 @@ dependencies {
         include(it)
     }
 
-    //modImplementation("software.bernie.geckolib:geckolib-forge-1.20.1:4.8.2")
-    //modImplementation("com.eliotlash.mclib:mclib:20")
+    modImplementation("software.bernie.geckolib:geckolib-forge-1.20.1:4.8.2")
+    modImplementation("com.eliotlash.mclib:mclib:20")
 }
 
 tasks {
