@@ -234,6 +234,7 @@ class UrCircleEntity(entityType: EntityType<out Mob>, level: Level) : Mob(entity
             combatBrain()
             // 死亡演出期间只播演出，不碰撞/不发射/不啃地/不播常态环境声
             if (circleState != CircleState.DYING) {
+                idleBehavior()
                 hurtContacts()
                 tryFireSlate()
                 groundContact()
@@ -838,6 +839,48 @@ class UrCircleEntity(entityType: EntityType<out Mob>, level: Level) : Mob(entity
     fun isProtected(): Boolean =
         circleState != CircleState.DYING && health / maxHealth > PROTECT_HEALTH_RATIO && livingServants() > 0
 
+    /** 巡航空闲行为：无目标时——血量 <90% 直接开始回复；满血（≥90%）自动一只只补下属到上限，
+     *  配合 [isProtected] 让大环停转+无敌。仅巡航、无存活目标时触发。 */
+    private fun idleBehavior() {
+        if (circleState != CircleState.CRUISE) return
+        if (servantSummonCooldown > 0) servantSummonCooldown--
+        val t = target
+        if (t != null && t.isAlive) return // 有目标：进入战斗，不回复不补员
+        val hpRatio = health / maxHealth
+        if (hpRatio < PROTECT_HEALTH_RATIO) {
+            // 无目标且血量 <90%：直接开始回复（回血到 90% 停）
+            healSelf(IDLE_REGEN)
+            if (tickCount % 10 == 0) {
+                val origin = position().add(0.0, bbHeight / 2.0, 0.0)
+                for (k in 0 until 3) {
+                    spawnParticle(level(), ParticleTypes.HAPPY_VILLAGER,
+                        origin.x + (random.nextDouble() - 0.5) * 5.0,
+                        origin.y + (random.nextDouble() - 0.5) * 5.0,
+                        origin.z + (random.nextDouble() - 0.5) * 5.0,
+                        0.0, 0.3, 0.0)
+                }
+            }
+            return
+        }
+        // 满血（≥90%）且无目标：一只只补下属到上限，第一只出来即触发 isProtected 停转+无敌
+        if (livingServants() < SummonServantSkill.MAX_SERVANTS && servantSummonCooldown <= 0) {
+            summonServantOne()
+            servantSummonCooldown = SERVANT_SUMMON_INTERVAL
+        }
+    }
+
+    /** 召唤一个下属（出现在大环周围随机角度）。 */
+    private fun summonServantOne() {
+        val level = level()
+        if (level.isClientSide) return
+        val origin = position().add(0.0, bbHeight / 2.0, 0.0)
+        val servant = UrCircleServant(HexMobEntities.UR_CIRCLE_SERVANT.get(), level)
+        val ang = random.nextDouble() * Math.PI * 2.0
+        servant.setPos(origin.x + cos(ang) * 2.0, origin.y + 1.0, origin.z + sin(ang) * 2.0)
+        servant.setOwner(this)
+        level.addFreshEntity(servant)
+    }
+
     // ---- 仇恨实体列表（多目标） ----
 
     /** 加入仇恨列表：非敌对、存活、在 [HATE_RANGE] 内、尚未记录。 */
@@ -965,6 +1008,10 @@ class UrCircleEntity(entityType: EntityType<out Mob>, level: Level) : Mob(entity
         const val SKILL_COOLDOWN = 100
         const val CHANNEL_PARTICLE_INTERVAL = 4
         const val PROTECT_HEALTH_RATIO = 0.9F
+        /** 巡航空闲自动回血：无目标且血量 <90% 时每 tick 回复量。 */
+        const val IDLE_REGEN = 1.0F
+        /** 巡航空闲自动补下属：满血无目标时每只的间隔（tick）。 */
+        const val SERVANT_SUMMON_INTERVAL = 40
         /** 反向过度施法：玩家距大环多近施法才积累反噬（格）。 */
         const val BACKLASH_RANGE = 32.0
         /** 反向过度施法：积累多少点反噬触发一次报复。 */
