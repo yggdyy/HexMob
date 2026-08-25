@@ -742,6 +742,8 @@ class UrCircleEntity(entityType: EntityType<out Mob>, level: Level) : Mob(entity
     override fun isPickable(): Boolean = false
     override fun getExperienceReward() = Enemy.XP_REWARD_BOSS
     override fun isNoGravity(): Boolean = true
+    /** Boss 持久化：vanilla 敌对生物会因"玩家太远/超时"被 checkDespawn 自然移除，这里禁掉（Boss 不该自然消失）。 */
+    override fun isPersistenceRequired(): Boolean = true
 
     /** 大环的"拒绝引用"事故：3 秒失明 + 自然文案。 */
     override fun createFlickeringMishap(entity: net.minecraft.world.entity.Entity): Mishap = UrCircleFlickerMishap(this)
