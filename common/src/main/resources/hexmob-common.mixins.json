@@ -12,6 +12,7 @@
     "EntityIotaFlickerMixin",
     "GeodeFeatureMixin",
     "LevelMixin",
+    "MultiNoiseBiomeSourceMixin",
     "NoiseBasedChunkGeneratorMixin",
     "OverworldBiomeBuilderMixin",
     "ServerLevelMixin",

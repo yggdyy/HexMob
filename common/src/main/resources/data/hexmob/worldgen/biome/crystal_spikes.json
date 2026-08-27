@@ -7,7 +7,7 @@
     ]
   },
   "creature_spawn_probability": 0.07,
-  "downfall": 0.5,
+  "downfall": 0.8,
   "effects": {
     "fog_color": 9077673,
     "mood_sound": {
@@ -34,8 +34,7 @@
       "minecraft:monster_room_deep"
     ],
     [
-      "hexmob:crystal_spike",
-      "minecraft:ice_patch"
+      "hexmob:crystal_spike"
     ],
     [],
     [
@@ -179,5 +178,5 @@
     "water_ambient": [],
     "water_creature": []
   },
-  "temperature": 0.8
+  "temperature": 0.7
 }
