@@ -105,4 +105,9 @@ dependencies {
 
     modImplementation("software.bernie.geckolib:geckolib-fabric-1.20.1:4.8.2")
     modImplementation("com.eliotlash.mclib:mclib:20")
+
+    // TerraBlender 软依赖（仅编译期）：fabric.mod.json 声明 "terrablender" entrypoint，
+    // 只有大包装有 TerraBlender 时才生效；无 TB 的环境（dev/普通 Fabric）不加载该类。
+    // 用仓库内 fabric/libs 的本地 jar（Loom 会按 named 映射重映射），避免联网拉取。
+    modCompileOnly(files("libs/TerraBlender-fabric-1.20.1-3.0.1.10.jar"))
 }

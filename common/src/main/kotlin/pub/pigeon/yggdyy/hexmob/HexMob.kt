@@ -32,6 +32,7 @@ object HexMob {
         HexMobNetworking.init()
         HexMobEntityAttributes.init()
         HexMobStructurePieceTypes.init()
+        HexMobStructures.init()
         HexMobFeatures.init()
         HexMobCreativeTab.init()
         HexMobEntitySpawns.init()

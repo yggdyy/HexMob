@@ -22,12 +22,14 @@ import pub.pigeon.yggdyy.hexmob.registry.HexMobTags
 class UrCircleTargetGoal(private val circle: UrCircleEntity) : TargetGoal(circle, true) {
 
     override fun canUse(): Boolean {
+        if (!circle.isAwake()) return false // 沉睡：不索敌
         rescanIfDue()
         val t = circle.target ?: return false
         return t.isAlive
     }
 
     override fun canContinueToUse(): Boolean {
+        if (!circle.isAwake()) return false
         rescanIfDue()
         val t = circle.target ?: return false
         return t.isAlive && circle.distanceToSqr(t) <= FOLLOW_RANGE * FOLLOW_RANGE

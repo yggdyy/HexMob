@@ -15,7 +15,7 @@ import kotlin.math.sqrt
 class UrCircleCruiseGoal(private val circle: UrCircleEntity) : Goal() {
 
     override fun canUse(): Boolean =
-        circle.circleState == CircleState.CRUISE && !circle.isProtected()
+        circle.isAwake() && circle.circleState == CircleState.CRUISE && !circle.isProtected()
 
     override fun canContinueToUse(): Boolean = canUse()
 

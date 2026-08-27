@@ -13,6 +13,7 @@ import at.petrak.hexcasting.common.lib.HexSounds
 import net.minecraft.core.BlockPos
 import net.minecraft.core.particles.BlockParticleOption
 import net.minecraft.core.particles.ParticleTypes
+import net.minecraft.core.registries.Registries
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.chat.Component
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket
@@ -49,6 +50,7 @@ import pub.pigeon.yggdyy.hexmob.HexMob
 import pub.pigeon.yggdyy.hexmob.api.entity.FlickeringEntity
 import pub.pigeon.yggdyy.hexmob.config.HexMobServerConfig
 import pub.pigeon.yggdyy.hexmob.content.IHMMultipartEntity
+import pub.pigeon.yggdyy.hexmob.content.guard.CrystalGuardEntity
 import pub.pigeon.yggdyy.hexmob.content.ur_circle.subentities.CubePart
 import pub.pigeon.yggdyy.hexmob.content.ur_circle.subentities.SlatePart
 import pub.pigeon.yggdyy.hexmob.content.ur_circle.servant.UrCircleServant
@@ -159,6 +161,13 @@ class UrCircleEntity(entityType: EntityType<out Mob>, level: Level) : Mob(entity
     private var servantSummonCooldown = 0
     /** Boss 血条（仅服务器端）：凋灵式，随距离加入/移除玩家。 */
     private var bossEvent: ServerBossEvent? = null
+    /** 沉睡标记（仅服务器端，随 NBT 持久化）：结构召唤的大环初始沉睡——不索敌/不动/不发技能/不显示血条/无敌，
+     *  玩家进入 [WAKE_RANGE] 格才苏醒。一旦苏醒不再沉睡。守卫怪据此判断"主人是否醒来"。 */
+    private var dormant = false
+    /** 结构召唤自查次数：实体化后的前若干 tick 内查一次 ur_circle_arena。 */
+    private var arenaCheckAttempts = 0
+    /** 是否已被玩家唤醒过（唤醒后不再被结构自查重新入睡）。 */
+    private var wokenOnce = false
     /** setHealth 免疫用的内部写血标记：仅在自身 hurt 流程/读档时置真。 */
     private var internalHealthWrite = false
     // ---- 限伤 / 受伤额外行为（服务端瞬态） ----
@@ -240,6 +249,13 @@ class UrCircleEntity(entityType: EntityType<out Mob>, level: Level) : Mob(entity
         updatePartsPos()
         if (!level().isClientSide) {
             if (homePos == null) homePos = position()
+            checkArenaDormancy()
+            if (dormant) {
+                // 沉睡：不索敌/不动/不发技能/不显示血条；玩家靠近 24 格唤醒
+                tryWakeFromDormancy()
+                updateBossBar()
+                return
+            }
             stateTicks += 1
             // 维护仇恨列表：清理死亡/超距/敌对的，无 target 时自动锁最优目标（先玩家、再剩余血量最高）
             hatedTargets.removeAll { !it.isAlive || it.isRemoved || it is Enemy || distanceToSqr(it) > HATE_RANGE * HATE_RANGE }
@@ -369,6 +385,7 @@ class UrCircleEntity(entityType: EntityType<out Mob>, level: Level) : Mob(entity
     fun fireRateFactor(): Float = 1.0F + (currentAnger() - 1.0F) * 0.6F
     fun updateShape() {
         if(!level().isClientSide) {
+            if (dormant) return // 沉睡：停转（环静止悬浮）
             val base = rotationSpeedFactor()
             // 蓄力吟唱：转速随时间线性衰减，完全停下的瞬间释放技能
             val rot = if (isProtected()) {
@@ -501,6 +518,43 @@ class UrCircleEntity(entityType: EntityType<out Mob>, level: Level) : Mob(entity
         craterAround(level(), feet, this)
         groundCraterCooldown = GROUND_CRATER_COOLDOWN
     }
+    /** 是否清醒（未沉睡）：守卫怪据此判断主人是否醒来。 */
+    fun isAwake(): Boolean = !dormant
+
+    /** 设置沉睡（结构召唤的大环初始沉睡；一旦唤醒不会自动再睡）。 */
+    fun setDormant(v: Boolean) { dormant = v }
+
+    /** 沉睡唤醒：附近 [WAKE_RANGE] 格内有玩家就醒来（苏醒演出：一声低吟）。 */
+    private fun tryWakeFromDormancy() {
+        val serverLevel = level() as? ServerLevel ?: return
+        val nearest = serverLevel.getNearestPlayer(this, WAKE_RANGE)
+        if (nearest != null) {
+            wokenOnce = true
+            dormant = false
+            HexMob.LOGGER.info("[UrCircle] woke up: player {} within {} blocks", nearest.name.string, WAKE_RANGE.toInt())
+            level().playSound(null, blockPosition(), HexSounds.CASTING_AMBIANCE, SoundSource.HOSTILE, 1.0F, 0.5F)
+        }
+    }
+
+    /**
+     * 结构召唤自查：ur_circle_arena 模板里的实体在 chunk 生成期会被序列化成 NBT 暂存
+     * （ProtoChunk.addEntity(Entity) → save → pending），直到 chunk 转正才真正实体化，
+     * 所以没法在 postProcess 里直接给实体打沉睡标记。改为实体化后的前若干 tick 自查：
+     * 若自己处于 ur_circle_arena 结构范围内 → 初始沉睡。被玩家唤醒后不再复查。
+     */
+    private fun checkArenaDormancy() {
+        if (dormant || wokenOnce) return
+        if (arenaCheckAttempts++ >= ARENA_CHECK_MAX_TICKS) return
+        val serverLevel = level() as? ServerLevel ?: return
+        val structure = serverLevel.registryAccess()
+            .registryOrThrow(Registries.STRUCTURE)
+            .get(HexMob.id("ur_circle_arena")) ?: return
+        val start = serverLevel.structureManager().getStructureAt(blockPosition(), structure)
+        if (start.isValid()) {
+            setDormant(true)
+        }
+    }
+
     /** Boss 血条（凋灵式）：进入 128 格的玩家看到紫色血条；活着时屏幕天色变暗 + Boss 音乐。 */
     private fun updateBossBar() {
         val serverLevel = level() as? ServerLevel ?: return
@@ -513,7 +567,7 @@ class UrCircleEntity(entityType: EntityType<out Mob>, level: Level) : Mob(entity
         val be = bossEvent ?: return
         be.name = type.description
         be.progress = health / maxHealth
-        if (!isAlive) {
+        if (dormant || !isAlive) {
             be.removeAllPlayers()
             return
         }
@@ -799,9 +853,10 @@ class UrCircleEntity(entityType: EntityType<out Mob>, level: Level) : Mob(entity
     }
     override fun addAdditionalSaveData(nbt: CompoundTag) {
         super.addAdditionalSaveData(nbt)
-
+        nbt.putBoolean("hexmob:Dormant", dormant)
     }
     override fun readAdditionalSaveData(compound: CompoundTag) {
+        dormant = compound.getBoolean("hexmob:Dormant")
         // 读档恢复血量走 setHealth，需放行
         internalHealthWrite = true
         super.readAdditionalSaveData(compound)
@@ -842,6 +897,7 @@ class UrCircleEntity(entityType: EntityType<out Mob>, level: Level) : Mob(entity
      *  实际受伤害还会喂给过载计数器（受伤额外行为，见 [accumulateOverload]）。 */
     override fun hurt(source: DamageSource, amount: Float): Boolean {
         if (!level().isClientSide) {
+            if (dormant) return false // 沉睡：无敌（唤醒只靠玩家接近，不靠攻击）
             if (circleState == CircleState.DYING) return false // 死亡演出：不再受伤
             val attacker = source.entity
             if (attacker === this) return false // 自身来源的伤害（如自爆）直接免疫，不结算
@@ -991,12 +1047,17 @@ class UrCircleEntity(entityType: EntityType<out Mob>, level: Level) : Mob(entity
         return if (e == Vec3.ZERO) position().add(0.0, bbHeight / 2.0, 0.0) else e
     }
 
-    /** 存活下属数量（64 格内、本大环召唤、还活着的恼鬼下属）。仅服务端。 */
+    /** 存活下属数量（64 格内、本大环召唤、还活着的仆从：恼鬼下属 + 被召唤的守卫）。仅服务端。 */
     fun livingServants(): Int {
         if (level().isClientSide) return 0
-        return level().getEntitiesOfClass(UrCircleServant::class.java, AABB(blockPosition()).inflate(64.0)) {
+        val box = AABB(blockPosition()).inflate(64.0)
+        val vex = level().getEntitiesOfClass(UrCircleServant::class.java, box) {
             it.isAlive && it.getOwner() === this
         }.size
+        val guards = level().getEntitiesOfClass(CrystalGuardEntity::class.java, box) {
+            it.isAlive && it.isSummonedBy(this)
+        }.size
+        return vex + guards
     }
 
     /** 保护状态：血量 >90% 且仍有下属存活 → 大环停转、不动、不受伤害。（死亡演出期间不适用） */
@@ -1033,16 +1094,42 @@ class UrCircleEntity(entityType: EntityType<out Mob>, level: Level) : Mob(entity
         }
     }
 
-    /** 召唤一个下属（出现在大环周围随机角度）。 */
-    private fun summonServantOne() {
+    /** 召唤一个下属（出现在大环周围随机角度，类型随机：恼鬼/弓箭/斧头/傀儡守卫）。 */
+    fun summonServantOne() {
+        summonPets(1)
+    }
+
+    /** 批量召唤 `count` 只仆从：恼鬼 40% / 弓箭守卫 20% / 斧头守卫 20% / 傀儡守卫 20%。 */
+    fun summonPets(count: Int) {
+        val origin = position().add(0.0, bbHeight / 2.0, 0.0)
+        for (i in 0 until count) summonPetOne(origin)
+    }
+
+    private fun summonPetOne(origin: Vec3) {
         val level = level()
         if (level.isClientSide) return
-        val origin = position().add(0.0, bbHeight / 2.0, 0.0)
-        val servant = UrCircleServant(HexMobEntities.UR_CIRCLE_SERVANT.get(), level)
         val ang = random.nextDouble() * Math.PI * 2.0
-        servant.setPos(origin.x + cos(ang) * 2.0, origin.y + 1.0, origin.z + sin(ang) * 2.0)
-        servant.setOwner(this)
-        level.addFreshEntity(servant)
+        val pos = Vec3(origin.x + cos(ang) * 2.0, origin.y + 1.0, origin.z + sin(ang) * 2.0)
+        val roll = random.nextFloat()
+        when {
+            roll < 0.4F -> {
+                val s = UrCircleServant(HexMobEntities.UR_CIRCLE_SERVANT.get(), level)
+                s.setPos(pos.x, pos.y, pos.z)
+                s.setOwner(this)
+                level.addFreshEntity(s)
+            }
+            roll < 0.6F -> spawnGuardPet(HexMobEntities.GUARD_ARCHER.get(), pos)
+            roll < 0.8F -> spawnGuardPet(HexMobEntities.GUARD_BRUTE.get(), pos)
+            else -> spawnGuardPet(HexMobEntities.GUARD_GOLEM.get(), pos)
+        }
+    }
+
+    private fun spawnGuardPet(type: EntityType<out CrystalGuardEntity>, pos: Vec3) {
+        val level = level()
+        val guard = type.create(level) ?: return
+        guard.setPos(pos.x, pos.y, pos.z)
+        guard.setSummoner(this)
+        level.addFreshEntity(guard)
     }
 
     // ---- 仇恨实体列表（多目标） ----
@@ -1169,6 +1256,10 @@ class UrCircleEntity(entityType: EntityType<out Mob>, level: Level) : Mob(entity
         const val GROUND_CRATER_COOLDOWN = 40
         const val AMBIENT_SOUND_INTERVAL = 100
         const val BOSS_BAR_RANGE = 128.0
+        /** 沉睡唤醒半径（格）：玩家进入此范围大环苏醒。 */
+        const val WAKE_RANGE = 24.0
+        /** 结构自查窗口：实体化后最多查这么多 tick（约 3 秒），找不到就认为不是结构召唤。 */
+        const val ARENA_CHECK_MAX_TICKS = 60
         const val SKILL_COOLDOWN = 100
         const val CHANNEL_PARTICLE_INTERVAL = 4
         const val PROTECT_HEALTH_RATIO = 0.9F

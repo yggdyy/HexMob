@@ -11,6 +11,9 @@ import pub.pigeon.yggdyy.hexmob.content.ur_circle.UrCircleRenderer
 import pub.pigeon.yggdyy.hexmob.content.ur_circle.renderers.SlateProjectileRenderer
 import pub.pigeon.yggdyy.hexmob.content.ur_circle.serpent.UrCircleSerpentRenderer
 import pub.pigeon.yggdyy.hexmob.content.ur_circle.servant.UrCircleServantRenderer
+import pub.pigeon.yggdyy.hexmob.content.guard.GuardArcherRenderer
+import pub.pigeon.yggdyy.hexmob.content.guard.GuardBruteRenderer
+import pub.pigeon.yggdyy.hexmob.content.guard.GuardGolemRenderer
 
 object HexMobEntityRenderers {
     fun init() {
@@ -24,5 +27,8 @@ object HexMobEntityRenderers {
         EntityRendererRegistry.register(HexMobEntities.SLATE_PROJECTILE) { context -> SlateProjectileRenderer(context) }
         EntityRendererRegistry.register(HexMobEntities.UR_CIRCLE_SERPENT) { context -> UrCircleSerpentRenderer(context) }
         EntityRendererRegistry.register(HexMobEntities.UR_CIRCLE_SERVANT) { context -> UrCircleServantRenderer(context) }
+        EntityRendererRegistry.register(HexMobEntities.GUARD_ARCHER) { context -> GuardArcherRenderer(context) }
+        EntityRendererRegistry.register(HexMobEntities.GUARD_BRUTE) { context -> GuardBruteRenderer(context) }
+        EntityRendererRegistry.register(HexMobEntities.GUARD_GOLEM) { context -> GuardGolemRenderer(context) }
     }
 }

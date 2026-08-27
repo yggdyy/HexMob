@@ -23,6 +23,9 @@ object HexMobCreativeTab {
             .displayItems { _, output ->
                 output.accept(HexMobItems.IOTA_SHEEP_SPAWN_EGG.get())
                 output.accept(HexMobItems.QUENCH_ALLAY_SPAWN_EGG.get())
+                output.accept(HexMobItems.GUARD_ARCHER_SPAWN_EGG.get())
+                output.accept(HexMobItems.GUARD_BRUTE_SPAWN_EGG.get())
+                output.accept(HexMobItems.GUARD_GOLEM_SPAWN_EGG.get())
                 output.accept(HexMobBlocks.STIMULATED_SLATE_ITEM.get())
                 output.accept(HexMobBlocks.INFESTED_EDIFIED_PLANKS_ITEM.get())
                 output.accept(HexMobBlocks.INFESTED_EDIFIED_PANEL_ITEM.get())

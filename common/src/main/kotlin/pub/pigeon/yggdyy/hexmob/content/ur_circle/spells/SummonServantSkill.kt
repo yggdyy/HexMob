@@ -3,13 +3,10 @@ package pub.pigeon.yggdyy.hexmob.content.ur_circle.spells
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.world.damagesource.DamageSource
 import pub.pigeon.yggdyy.hexmob.content.ur_circle.UrCircleEntity
-import pub.pigeon.yggdyy.hexmob.content.ur_circle.servant.UrCircleServant
-import pub.pigeon.yggdyy.hexmob.registry.HexMobEntities
-import kotlin.math.cos
-import kotlin.math.sin
 
 /**
- * 【召唤下属】Summon Servants——大环召唤一批恼鬼式飞行近战下属护卫自己。
+ * 【召唤下属】Summon Servants——大环召唤一批仆从护卫自己：
+ * 恼鬼式飞行近战下属 40% + 弓箭守卫/斧头守卫/傀儡守卫 各 20%（守卫计入召唤预算）。
  * 仅当血量 >90% 且存活下属少于上限时可吟唱。
  *
  * 配合保护机制：下属存活期间大环停转/不动/无敌（见 UrCircleEntity.isProtected），
@@ -42,21 +39,13 @@ class SummonServantSkill : UrCircleSkill("summon_servants", 70) {
     }
 
     override fun cast(circle: UrCircleEntity) {
-        val level = circle.level()
-        if (level.isClientSide) return
-        val origin = circle.position().add(0.0, circle.bbHeight / 2.0, 0.0)
+        if (circle.level().isClientSide) return
         val missing = MAX_SERVANTS - circle.livingServants()
-        for (i in 0 until missing) {
-            val servant = UrCircleServant(HexMobEntities.UR_CIRCLE_SERVANT.get(), level)
-            val ang = circle.random.nextDouble() * Math.PI * 2.0
-            servant.setPos(origin.x + cos(ang) * 2.0, origin.y + 1.0, origin.z + sin(ang) * 2.0)
-            servant.setOwner(circle)
-            level.addFreshEntity(servant)
-        }
+        circle.summonPets(missing)
     }
 
     companion object {
-        const val MAX_SERVANTS = 5
+        const val MAX_SERVANTS = 8
         /** 打断阈值：单次原始伤害 ≥20 才打断。 */
         const val INTERRUPT_THRESHOLD = 20.0F
     }

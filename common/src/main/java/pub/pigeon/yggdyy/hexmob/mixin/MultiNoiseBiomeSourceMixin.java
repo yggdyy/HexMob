@@ -14,6 +14,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import pub.pigeon.yggdyy.hexmob.worldgen.CrystalSpikesHolder;
 
 import java.util.List;
 
@@ -29,7 +30,7 @@ import java.util.List;
  * 且该列气候的奇异度落在 CRYSTAL_WEIRDNESS 子带时，改判为 hexmob:crystal_spikes。
  * 纯按噪声、确定性（服务端/客户端一致）、可调频率、不影响任何其它群系。
  */
-@Mixin(MultiNoiseBiomeSource.class)
+@Mixin(value = MultiNoiseBiomeSource.class, priority = 5000)
 public abstract class MultiNoiseBiomeSourceMixin {
     private static final ResourceKey<Biome> CRYSTAL_SPIKES =
         ResourceKey.create(Registries.BIOME, new ResourceLocation("hexmob", "crystal_spikes"));
@@ -39,7 +40,33 @@ public abstract class MultiNoiseBiomeSourceMixin {
     private static final java.util.Set<ResourceKey<Biome>> HOSTS = java.util.Set.of(
         Biomes.DARK_FOREST, Biomes.SWAMP, Biomes.FOREST, Biomes.BIRCH_FOREST, Biomes.FLOWER_FOREST
     );
-    private static Holder<Biome> crystalHolder;
+    /** 诊断用一次性标记。 */
+    private static boolean diagRun;
+    private static boolean diagNotHost;
+    private static boolean diagNoCrystal;
+    private static boolean diagSet;
+    private static boolean diagHead;
+
+    static {
+        // 用与 FabricHexMob 相同的 Log4j logger（pub.pigeon.yggdyy.hexmob.HexMob.LOGGER），
+        // 确保诊断能进大包 latest.log。
+        pub.pigeon.yggdyy.hexmob.HexMob.LOGGER.info("[MNB] MultiNoiseBiomeSourceMixin loaded");
+    }
+
+    private static void diag(String msg) {
+        pub.pigeon.yggdyy.hexmob.HexMob.LOGGER.info("[MNB] " + msg);
+    }
+
+    @Inject(
+        method = "getNoiseBiome(IIILnet/minecraft/world/level/biome/Climate$Sampler;)Lnet/minecraft/core/Holder;",
+        at = @At("HEAD")
+    )
+    private void hexmob$diagHead(int x, int y, int z, Climate.Sampler sampler, CallbackInfoReturnable<Holder<Biome>> cir) {
+        if (!diagHead) {
+            diagHead = true;
+            diag("getNoiseBiome(4-arg) CALLED, biomeSource class = " + this.getClass().getName());
+        }
+    }
 
     @Shadow
     private Climate.ParameterList<Holder<Biome>> parameters() {
@@ -47,13 +74,27 @@ public abstract class MultiNoiseBiomeSourceMixin {
     }
 
     @Inject(
+        // 全描述符精确命中 4 参 getNoiseBiome（name-only 会匹配到 getNoiseBiome(TargetPoint) 重载导致 dev 签名不匹配崩）。
+        // ⚠ Loom refmap 无法映射这个重载名（类层级里 getNoiseBiome 有 3 个）+ Climate$ 嵌套类型，
+        //   发布包（intermediary 命名）找不到目标会崩启动——由 scripts/patch-refmap.ps1 在装包时补 method_38109。
         method = "getNoiseBiome(IIILnet/minecraft/world/level/biome/Climate$Sampler;)Lnet/minecraft/core/Holder;",
         at = @At("RETURN"),
         cancellable = true
     )
     private void hexmob$scatterCrystalSpikes(int x, int y, int z, Climate.Sampler sampler, CallbackInfoReturnable<Holder<Biome>> cir) {
+        if (!diagRun) {
+            diagRun = true;
+            diag("scatter RETURN handler invoked; registryCached=" + (CrystalSpikesHolder.get() != null)
+                + ", paramsHasCrystal=" + (findCrystalHolder() != null));
+        }
         Holder<Biome> biome = cir.getReturnValue();
         if (biome == null || !biome.is(HOSTS::contains)) {
+            if (!diagNotHost) {
+                diagNotHost = true;
+                diag("returned biome not a host: "
+                    + (biome == null ? "null" : biome.unwrapKey().map(k -> k.location().toString()).orElse("no-key"))
+                    + " (weird=" + sampler.sample(x, y, z).weirdness() + ")");
+            }
             return;
         }
         if (CRYSTAL_WEIRDNESS.distance(sampler.sample(x, y, z).weirdness()) != 0) {
@@ -63,15 +104,23 @@ public abstract class MultiNoiseBiomeSourceMixin {
         if (!chunkPasses(x, z)) {
             return;
         }
-        Holder<Biome> crystal = crystalHolder;
+        Holder<Biome> crystal = findCrystalHolder();
         if (crystal == null) {
-            crystal = findCrystalHolder();
-            if (crystal == null) {
-                return; // 群系没在参数表里（非主世界/自定义世界）——不干预
+            if (!diagNoCrystal) {
+                diagNoCrystal = true;
+                diag("host+weird+gate passed but NO crystal holder!");
             }
-            crystalHolder = crystal;
+            return; // 群系不可用（非主世界/自定义世界）——不干预
         }
         cir.setReturnValue(crystal);
+        // ⚠ priority=5000（高于 TerraBlender 的默认 1000）+ cancel：TerraBlender 也在 getNoiseBiome
+        //   RETURN 上挂了 @Inject（会把它 region 的群系写回来/可能先改写宿主），必须在此停住后续 handler，
+        //   确保晶簇尖刺判定必胜。非晶簇块我们早退不 cancel，TerraBlender 照常工作。
+        cir.cancel();
+        if (!diagSet) {
+            diagSet = true;
+            diag("crystal SET at chunk (" + (x >> 4) + "," + (z >> 4) + ")");
+        }
     }
 
     /** 稀有化判定：按区块坐标做确定性哈希（同区块结果一致 = 整块触发），固定盐值，约 15% 区块通过。 */
@@ -83,8 +132,17 @@ public abstract class MultiNoiseBiomeSourceMixin {
         return ((hash & 0x7FFFFFFFL) % 100) < 15;
     }
 
-    /** 从主世界气候表里找 hexmob:crystal_spikes 的 Holder（由 OverworldBiomeBuilderMixin 注入的那一项）。 */
+    /**
+     * 找 hexmob:crystal_spikes 的 Holder。
+     * 首选 {@link CrystalSpikesHolder}（服务器启动时从世界动态注册表解析的缓存，
+     * TerraBlender 会重建参数表、parameters() 里可能没有该项）；参数表扫描作为兜底
+     * （覆盖 forge / 未触发缓存等路径，由 OverworldBiomeBuilderMixin 注入的那一项）。
+     */
     private Holder<Biome> findCrystalHolder() {
+        Holder<Biome> cached = CrystalSpikesHolder.get();
+        if (cached != null) {
+            return cached;
+        }
         List<Pair<Climate.ParameterPoint, Holder<Biome>>> values = this.parameters().values();
         if (values == null) {
             return null;

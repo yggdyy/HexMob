@@ -15,6 +15,9 @@ import pub.pigeon.yggdyy.hexmob.content.ur_circle.UrCircleEntity
 import pub.pigeon.yggdyy.hexmob.content.ur_circle.SlateProjectile
 import pub.pigeon.yggdyy.hexmob.content.ur_circle.serpent.UrCircleSerpent
 import pub.pigeon.yggdyy.hexmob.content.ur_circle.servant.UrCircleServant
+import pub.pigeon.yggdyy.hexmob.content.guard.GuardArcher
+import pub.pigeon.yggdyy.hexmob.content.guard.GuardBrute
+import pub.pigeon.yggdyy.hexmob.content.guard.GuardGolem
 
 object HexMobEntities {
     fun init() {
@@ -75,5 +78,23 @@ object HexMobEntities {
             { type, level -> UrCircleServant(type, level) },
             MobCategory.MONSTER
         ).sized(0.6F, 1.2F).build("ur_circle_servant")
+    }
+    val GUARD_ARCHER: DeferredSupplier<EntityType<GuardArcher>> = ENTITIES.register("guard_archer") {
+        EntityType.Builder.of(
+            { type, level -> GuardArcher(type, level) },
+            MobCategory.MONSTER
+        ).sized(0.6F, 1.95F).build("guard_archer")
+    }
+    val GUARD_BRUTE: DeferredSupplier<EntityType<GuardBrute>> = ENTITIES.register("guard_brute") {
+        EntityType.Builder.of(
+            { type, level -> GuardBrute(type, level) },
+            MobCategory.MONSTER
+        ).sized(0.6F, 1.95F).build("guard_brute")
+    }
+    val GUARD_GOLEM: DeferredSupplier<EntityType<GuardGolem>> = ENTITIES.register("guard_golem") {
+        EntityType.Builder.of(
+            { type, level -> GuardGolem(type, level) },
+            MobCategory.MONSTER
+        ).sized(1.4F, 2.7F).build("guard_golem")
     }
 }

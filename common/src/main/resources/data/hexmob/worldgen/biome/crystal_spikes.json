@@ -165,6 +165,24 @@
         "maxCount": 4,
         "minCount": 4,
         "weight": 80
+      },
+      {
+        "type": "hexmob:guard_archer",
+        "maxCount": 2,
+        "minCount": 1,
+        "weight": 20
+      },
+      {
+        "type": "hexmob:guard_brute",
+        "maxCount": 2,
+        "minCount": 1,
+        "weight": 20
+      },
+      {
+        "type": "hexmob:guard_golem",
+        "maxCount": 1,
+        "minCount": 1,
+        "weight": 8
       }
     ],
     "underground_water_creature": [
