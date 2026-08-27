@@ -12,6 +12,8 @@
     "EntityIotaFlickerMixin",
     "GeodeFeatureMixin",
     "LevelMixin",
+    "NoiseBasedChunkGeneratorMixin",
+    "OverworldBiomeBuilderMixin",
     "ServerLevelMixin",
     "StrongholdPieces$LibraryAccessor",
     "StrongholdPiecesMixin"

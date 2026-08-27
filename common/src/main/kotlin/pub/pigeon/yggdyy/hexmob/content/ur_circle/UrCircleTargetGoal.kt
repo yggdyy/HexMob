@@ -6,8 +6,8 @@ import net.minecraft.world.entity.player.Player
 import pub.pigeon.yggdyy.hexmob.registry.HexMobTags
 
 /**
- * 大环的索敌：周期扫描附近 32 格内"有智慧"的生物（hexmob:wise tag——
- * 村民、流浪商人、猪灵、玩家、灾厄村民），锁定最近的一个。
+ * 大环的索敌：周期扫描附近 [SCAN_RANGE] 格内"有智慧"的生物（hexmob:wise tag——
+ * 村民、流浪商人、猪灵、玩家、末影龙、灾厄村民），锁定最近的一个。
  *
  * 关键点：
  * - 每 10 tick 重扫一次（canUse/canContinueToUse/tick 都会触发），
@@ -30,7 +30,7 @@ class UrCircleTargetGoal(private val circle: UrCircleEntity) : TargetGoal(circle
     override fun canContinueToUse(): Boolean {
         rescanIfDue()
         val t = circle.target ?: return false
-        return t.isAlive && circle.distanceToSqr(t) <= 40.0 * 40.0
+        return t.isAlive && circle.distanceToSqr(t) <= FOLLOW_RANGE * FOLLOW_RANGE
     }
 
     override fun tick() {
@@ -45,7 +45,7 @@ class UrCircleTargetGoal(private val circle: UrCircleEntity) : TargetGoal(circle
         if (cur != null && cur.isAlive) return
         val target = circle.preferredTargets(
             circle.level()
-                .getEntitiesOfClass(LivingEntity::class.java, circle.boundingBox.inflate(32.0))
+                .getEntitiesOfClass(LivingEntity::class.java, circle.boundingBox.inflate(SCAN_RANGE))
                 .filter {
                     it.isAlive && it !== circle &&
                         !(it is Player && it.isCreative) &&
@@ -56,5 +56,12 @@ class UrCircleTargetGoal(private val circle: UrCircleEntity) : TargetGoal(circle
             circle.target = target
             circle.addToHated(target)
         }
+    }
+
+    companion object {
+        /** 索敌扫描范围（格）：每 10 tick 扫此半径内 wise 生物。 */
+        const val SCAN_RANGE = 48.0
+        /** 跟随范围（格）：超过后放弃当前目标（须大于扫描范围，避免追到一半掉锁）。 */
+        const val FOLLOW_RANGE = 56.0
     }
 }

@@ -2,9 +2,11 @@ package pub.pigeon.yggdyy.hexmob.config
 
 import at.petrak.hexcasting.api.misc.MediaConstants
 import dev.architectury.event.events.common.PlayerEvent
+import dev.architectury.utils.GameInstance
 import me.shedaniel.autoconfig.AutoConfig
 import me.shedaniel.autoconfig.ConfigData
 import me.shedaniel.autoconfig.ConfigHolder
+import me.shedaniel.autoconfig.ConfigManager
 import me.shedaniel.autoconfig.annotation.Config
 import me.shedaniel.autoconfig.annotation.ConfigEntry.Category
 import me.shedaniel.autoconfig.annotation.ConfigEntry.Gui.Tooltip
@@ -24,6 +26,34 @@ object HexMobServerConfig {
     val config get() = syncedServerConfig ?: holder.config.server
     // only used on the client
     private var syncedServerConfig: ServerConfig? = null
+
+    /** 大环体积倍率上下限。 */
+    const val MIN_UR_CIRCLE_SCALE = 0.25F
+    const val MAX_UR_CIRCLE_SCALE = 4.0F
+
+    /** 命令热调整大环体积倍率：改值 → 落盘 → 广播给所有在线玩家（客户端渲染同步）。 */
+    @JvmStatic
+    fun setUrCircleScale(value: Float) {
+        config.urCircleScale = value.coerceIn(MIN_UR_CIRCLE_SCALE, MAX_UR_CIRCLE_SCALE)
+        persistServerConfig()
+        val server = GameInstance.getServer() ?: return
+        val players = server.playerList.players
+        if (players.isNotEmpty()) {
+            MsgSyncConfigS2C(holder.config.server).sendToPlayers(players)
+        }
+    }
+
+    /** 直接把当前 server 分区序列化到 config/hexmob.toml（绕过会拦截保存的 FAIL 监听器，写文件由命令触发）。 */
+    private fun persistServerConfig() {
+        try {
+            val mgr = holder as ConfigManager<*>
+            @Suppress("UNCHECKED_CAST")
+            (mgr as ConfigManager<GlobalConfig>).getSerializer().serialize(holder.config)
+        } catch (t: Throwable) {
+            HexMob.LOGGER.warn("Failed to persist server config", t)
+        }
+    }
+
     fun init() {
         holder = AutoConfig.register(
             GlobalConfig::class.java,
@@ -64,15 +94,20 @@ object HexMobServerConfig {
         var stimulatedPatternSpawnRate: Double = 0.5
         @Tooltip
         var cryingAmethystSpawnRate: Double = 0.5
+        /** 大环体积倍率（0.25~4.0，默认 1.0 = 现状；渲染/半径/碰撞一致缩放）。 */
+        @Tooltip
+        var urCircleScale: Float = 1.0F
         fun encode(buf: FriendlyByteBuf) {
             buf.writeLong(opTransformStimulatedPatternCost)
             buf.writeDouble(opStimulatedSlateMediaDiscount)
             buf.writeDouble(stimulatedPatternSpawnRate)
+            buf.writeFloat(urCircleScale)
         }
         fun decode(buf: FriendlyByteBuf): ServerConfig {
             opTransformStimulatedPatternCost = buf.readVarLong()
             opStimulatedSlateMediaDiscount = buf.readDouble()
             stimulatedPatternSpawnRate = buf.readDouble()
+            urCircleScale = buf.readFloat()
             return this
         }
     }

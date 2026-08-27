@@ -1,11 +1,13 @@
 package pub.pigeon.yggdyy.hexmob.content.ur_circle
 
 import at.petrak.hexcasting.api.HexAPI
+import at.petrak.hexcasting.api.casting.ParticleSpray
 import at.petrak.hexcasting.api.casting.math.HexDir
 import at.petrak.hexcasting.api.casting.math.HexPattern
 import at.petrak.hexcasting.api.casting.mishaps.Mishap
 import at.petrak.hexcasting.common.lib.HexBlocks
 import at.petrak.hexcasting.common.lib.HexDamageTypes
+import at.petrak.hexcasting.common.lib.HexParticles
 import net.minecraft.sounds.SoundEvent
 import at.petrak.hexcasting.common.lib.HexSounds
 import net.minecraft.core.BlockPos
@@ -26,6 +28,7 @@ import net.minecraft.world.BossEvent
 import net.minecraft.world.effect.MobEffectInstance
 import net.minecraft.world.effect.MobEffects
 import net.minecraft.world.damagesource.DamageSource
+import net.minecraft.world.damagesource.DamageTypes
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.ExperienceOrb
@@ -44,6 +47,7 @@ import net.minecraft.world.phys.Vec3
 import org.joml.Vector3f
 import pub.pigeon.yggdyy.hexmob.HexMob
 import pub.pigeon.yggdyy.hexmob.api.entity.FlickeringEntity
+import pub.pigeon.yggdyy.hexmob.config.HexMobServerConfig
 import pub.pigeon.yggdyy.hexmob.content.IHMMultipartEntity
 import pub.pigeon.yggdyy.hexmob.content.ur_circle.subentities.CubePart
 import pub.pigeon.yggdyy.hexmob.content.ur_circle.subentities.SlatePart
@@ -157,6 +161,17 @@ class UrCircleEntity(entityType: EntityType<out Mob>, level: Level) : Mob(entity
     private var bossEvent: ServerBossEvent? = null
     /** setHealth 免疫用的内部写血标记：仅在自身 hurt 流程/读档时置真。 */
     private var internalHealthWrite = false
+    // ---- 限伤 / 受伤额外行为（服务端瞬态） ----
+    /** DPS 窗口限伤：当前窗口已累计伤害。 */
+    private var dpsWindow = 0.0F
+    /** DPS 窗口起点（tickCount）。 */
+    private var dpsWindowStart = 0
+    /** 过载累计（窗口内实际受伤害）。 */
+    private var overloadDamage = 0.0F
+    /** 过载窗口起点（tickCount）。 */
+    private var overloadWindowStart = 0
+    /** 过载反击冷却。 */
+    private var overloadCooldown = 0
     /** 蓄力技能列表：吟唱冷却好时在"满足 canUse 的技能"里按权重随机抽一个进入 CHANNELING
      *  （见 [pickWeightedSkill]；权重见各技能 weight）。 */
     val skills: MutableList<UrCircleSkill> = mutableListOf(
@@ -282,6 +297,72 @@ class UrCircleEntity(entityType: EntityType<out Mob>, level: Level) : Mob(entity
 
     /** 环刃风暴的部件/半径放大倍率：1 → RING_SPIN_MAX_SCALE（渲染与命中判定共用）。 */
     fun ringSpinScale(): Float = 1.0F + ringSpinProgress() * (RING_SPIN_MAX_SCALE - 1.0F)
+    /** 总放大倍率 = 服务端配置的体积倍率 × 环刃风暴倍率（渲染/半径/碰撞共用，两端同值：客户端读 S2C 同步的配置）。 */
+    fun totalScale(): Float = HexMobServerConfig.config.urCircleScale * ringSpinScale()
+
+    /** 环外圈半径（格）：外圈石板到中心的距离 × 总放大倍率——飞行回避/部件不穿墙用。 */
+    fun ringOuterRadius(): Double = (eclipticRadius.length() * totalScale()).toDouble()
+    /** 环内圈半径（格）：内圈促动石到中心的距离 × 总放大倍率——飞行回避也采内圈。 */
+    fun ringInnerRadius(): Double = (equatorRadius.length() * totalScale()).toDouble()
+
+    /**
+     * 部件回避：返回一个"环整体不穿墙"的飞行方向（避免任何部件卡进方块，不只是核心）。
+     * 优先级：目标方向 → 抬升爬高 → 水平左右偏转（含微抬） → 反向退后 → 直接爬升；
+     * 当前已卡住时"全力爬升 / 反向退后"优先脱困。
+     * 每个候选做"半程 + 终点"两点探测，降低路径中途穿入；**全堵返回 null**（调用方减速悬停，不硬撞）。
+     */
+    fun safeFlightDir(desired: Vec3, lookAhead: Double): Vec3? {
+        val rOuter = ringOuterRadius() + RING_CLEAR_MARGIN
+        val rInner = ringInnerRadius() + RING_CLEAR_MARGIN
+        val origin = position().add(0.0, bbHeight / 2.0, 0.0)
+        val currentlyClear = ringClear(level(), origin, rOuter, rInner)
+        val candidates = ArrayList<Vec3>()
+        if (!currentlyClear) {
+            // 已卡住：全力爬升 / 反向退后 优先脱困
+            candidates.add(Vec3(0.0, 1.0, 0.0))
+            candidates.add(desired.scale(-1.0).normalize())
+            candidates.add(Vec3(desired.x, desired.y + 0.5, desired.z).normalize())
+        }
+        candidates.add(desired.normalize())
+        candidates.add(Vec3(desired.x, desired.y + 0.35, desired.z).normalize())
+        candidates.add(desired.yRot(0.6F))
+        candidates.add(desired.yRot(-0.6F))
+        candidates.add(Vec3(desired.yRot(0.6F).x, desired.y + 0.2, desired.yRot(0.6F).z).normalize())
+        candidates.add(Vec3(desired.yRot(-0.6F).x, desired.y + 0.2, desired.yRot(-0.6F).z).normalize())
+        candidates.add(desired.scale(-1.0).normalize())
+        candidates.add(Vec3(0.0, 1.0, 0.0))
+        for (c in candidates) {
+            val mid = origin.add(c.scale(lookAhead * 0.5))
+            val end = origin.add(c.scale(lookAhead))
+            if (ringClear(level(), mid, rOuter, rInner) && ringClear(level(), end, rOuter, rInner)) return c
+        }
+        return null // 全堵：调用方减速悬停，不硬撞穿模
+    }
+
+    /** 环盘采样（外圈 [RING_CLEAR_SAMPLES] 点 + 内圈 [RING_INNER_SAMPLES] 点 + 中心，垂直覆盖随半径缩放）：
+     *  全部不与方块碰撞才返回 true。黄道面是倾斜的（±半径×sin23°），垂直覆盖 = 外圈半径 × [RING_THICKNESS_RATIO]。 */
+    private fun ringClear(level: Level, pos: Vec3, rOuter: Double, rInner: Double): Boolean {
+        val thick = (rOuter * RING_THICKNESS_RATIO).toInt().coerceIn(MIN_RING_THICKNESS, MAX_RING_THICKNESS)
+        for (k in 0 until RING_CLEAR_SAMPLES) {
+            val a = Math.PI * 2.0 * k / RING_CLEAR_SAMPLES
+            val sx = pos.x + cos(a) * rOuter
+            val sz = pos.z + sin(a) * rOuter
+            for (dy in -thick..thick) {
+                val py = pos.y + dy
+                if (!level.noCollision(AABB(sx - 0.05, py - 0.05, sz - 0.05, sx + 0.05, py + 0.05, sz + 0.05))) return false
+            }
+        }
+        for (k in 0 until RING_INNER_SAMPLES) {
+            val a = Math.PI * 2.0 * k / RING_INNER_SAMPLES
+            val sx = pos.x + cos(a) * rInner
+            val sz = pos.z + sin(a) * rInner
+            for (dy in -thick..thick) {
+                val py = pos.y + dy
+                if (!level.noCollision(AABB(sx - 0.05, py - 0.05, sz - 0.05, sx + 0.05, py + 0.05, sz + 0.05))) return false
+            }
+        }
+        return level.noCollision(AABB(pos.x - 0.5, pos.y - 0.5, pos.z - 0.5, pos.x + 0.5, pos.y + 0.5, pos.z + 0.5))
+    }
     /** 移动速度因子：强烈阻尼，移速基本保持稳定。 */
     fun moveSpeedFactor(): Float = 1.0F + (currentAnger() - 1.0F) * 0.3F
     /** 射速因子：中等阻尼，射速可以稍快但不夸张。 */
@@ -327,7 +408,7 @@ class UrCircleEntity(entityType: EntityType<out Mob>, level: Level) : Mob(entity
         val eqN = if (tumbling) equatorNormal.rotateDA(tumbleDeg, equatorRadius.normalize()) else equatorNormal
         val ecN = if (tumbling) eclipticNormal.rotateDA(tumbleDeg, eclipticRadius.normalize()) else eclipticNormal
         // 环刃风暴：赤道/黄道半径随膨胀倍率扩展（部件位置外推）
-        val ringScale = ringSpinScale()
+        val ringScale = totalScale()
         for(i in 0..<equator.size) {
             val deg: Float = equatorRotation + (i / equator.size.toFloat() * 360F)
             val delta: Vec3 = equatorRadius.rotateDA(deg, eqN).scale(ringScale.toDouble())
@@ -355,7 +436,7 @@ class UrCircleEntity(entityType: EntityType<out Mob>, level: Level) : Mob(entity
         for (part in getAllParts()) {
             val p = part.posNow
             if (p == Vec3.ZERO) continue // 首 tick 部件还没就位
-            val box = AABB(p, p).inflate(1.1)
+            val box = AABB(p, p).inflate(1.1 * totalScale())
             for (victim in level().getEntitiesOfClass(LivingEntity::class.java, box)) {
                 if (victim === this || victim is Enemy) continue
                 if (contactCooldowns.containsKey(victim.uuid)) continue
@@ -744,15 +825,22 @@ class UrCircleEntity(entityType: EntityType<out Mob>, level: Level) : Mob(entity
     override fun isNoGravity(): Boolean = true
     /** Boss 持久化：vanilla 敌对生物会因"玩家太远/超时"被 checkDespawn 自然移除，这里禁掉（Boss 不该自然消失）。 */
     override fun isPersistenceRequired(): Boolean = true
+    /** 大环不会着火：忽略一切点火（火焰伤害仍走 90% 减免）。 */
+    override fun setRemainingFireTicks(ticks: Int) {}
 
     /** 大环的"拒绝引用"事故：3 秒失明 + 自然文案。 */
     override fun createFlickeringMishap(entity: net.minecraft.world.entity.Entity): Mishap = UrCircleFlickerMishap(this)
     /** 被打立刻还击：把（直接/间接）攻击者设为当前目标——凋灵式 HurtByTarget 行为；
      *  吟唱（CHANNELING）/光束（BEAM）期间受伤委托给当前技能控制。
-     *  整个服务端受击流程包裹 internalHealthWrite，让随后的扣血 setHealth 得以通过（见 setHealth 免疫规则）。 */
+     *  整个服务端受击流程包裹 internalHealthWrite，让随后的扣血 setHealth 得以通过（见 setHealth 免疫规则）。
+     *
+     *  限伤管线（顺序：免疫/减免 → 软上限 → DPS 窗口 → 技能减伤倍率）：
+     *  - 免疫：环境/cheese 伤害（摔落、挤压、溺水、冰冻、仙人掌、虚空）与爆炸直接无视；
+     *  - 火焰减免 [FIRE_DAMAGE_MULTIPLIER]（90%）；
+     *  - 软上限：单发 > [SOFT_HIT_CAP] 的部分只按 [DAMAGE_OVERFLOW_MULTIPLIER]（20%）结算；
+     *  - DPS 窗口：每 [DPS_WINDOW_TICKS] tick 累计伤害上限 [DPS_CAP_PER_WINDOW]，超出的不计。
+     *  实际受伤害还会喂给过载计数器（受伤额外行为，见 [accumulateOverload]）。 */
     override fun hurt(source: DamageSource, amount: Float): Boolean {
-        // 单次受击伤害上限：超过 [MAX_HIT_DAMAGE] 的部分削掉，不进入结算（吟唱委托同样走封顶后的值）
-        val capped = amount.coerceAtMost(MAX_HIT_DAMAGE)
         if (!level().isClientSide) {
             if (circleState == CircleState.DYING) return false // 死亡演出：不再受伤
             val attacker = source.entity
@@ -762,27 +850,101 @@ class UrCircleEntity(entityType: EntityType<out Mob>, level: Level) : Mob(entity
                 addToHated(attacker)
             }
             if (source.`is`(HexDamageTypes.OVERCAST)) return false // 忽略过度施法（反向施法）伤害
-            internalHealthWrite = true
+            if (isImmuneDamage(source)) return false // 环境/爆炸免疫
+            if (isProtected()) return false // 保护状态（血>90% 且有下属）：不受任何伤害
         }
-        return try {
-            if (!level().isClientSide) {
-                // 保护状态（血量>90% 且仍有下属存活）：不受任何伤害
-                if (isProtected()) {
-                    return false
-                }
-                val active = when (circleState) {
-                    CircleState.CHANNELING -> currentSkill
-                    CircleState.BEAM -> beamSkill
-                    else -> null
-                }
-                if (active != null) {
-                    return active.onChannelHurt(this, source, capped)
-                }
+        // 火焰减免 90%
+        var dmg = if (isFireDamage(source)) amount * FIRE_DAMAGE_MULTIPLIER else amount
+        // 软上限：单发 > SOFT_HIT_CAP 的部分只吃 20%
+        if (dmg > SOFT_HIT_CAP) {
+            dmg = SOFT_HIT_CAP + (dmg - SOFT_HIT_CAP) * DAMAGE_OVERFLOW_MULTIPLIER
+        }
+        // DPS 窗口：每 DPS_WINDOW_TICKS 累计上限 DPS_CAP_PER_WINDOW（服务端结算；客户端只看软上限）
+        if (!level().isClientSide) {
+            val now = tickCount
+            if (now - dpsWindowStart >= DPS_WINDOW_TICKS) {
+                dpsWindowStart = now
+                dpsWindow = 0.0F
             }
-            super.hurt(source, capped)
+            val room = DPS_CAP_PER_WINDOW - dpsWindow
+            val allowed = dmg.coerceAtMost(room)
+            if (allowed <= 0.0F) return false // 本窗口已满：本次伤害不计
+            dpsWindow += allowed
+            dmg = allowed
+        }
+        internalHealthWrite = true
+        return try {
+            val active = when (circleState) {
+                CircleState.CHANNELING -> currentSkill
+                CircleState.BEAM -> beamSkill
+                else -> null
+            }
+            val result = if (active != null && !level().isClientSide) {
+                active.onChannelHurt(this, source, dmg)
+            } else {
+                super.hurt(source, dmg)
+            }
+            // 受伤额外行为：实际受伤害喂给过载计数器
+            if (result && !level().isClientSide && dmg > 0.0F) {
+                accumulateOverload(dmg)
+            }
+            result
         } finally {
             internalHealthWrite = false
         }
+    }
+
+    /** 完全免疫的伤害类型：环境/cheese 伤害 + 爆炸（TNT/苦力怕/玩家爆破/火球）。 */
+    private fun isImmuneDamage(source: DamageSource): Boolean =
+        source.`is`(DamageTypes.FALL) || source.`is`(DamageTypes.FLY_INTO_WALL) ||
+            source.`is`(DamageTypes.IN_WALL) || source.`is`(DamageTypes.DROWN) ||
+            source.`is`(DamageTypes.DRY_OUT) || source.`is`(DamageTypes.FREEZE) ||
+            source.`is`(DamageTypes.CACTUS) || source.`is`(DamageTypes.FELL_OUT_OF_WORLD) ||
+            source.`is`(DamageTypes.EXPLOSION) || source.`is`(DamageTypes.PLAYER_EXPLOSION) ||
+            source.`is`(DamageTypes.FIREBALL) || source.`is`(DamageTypes.UNATTRIBUTED_FIREBALL)
+
+    /** 火焰系伤害：减免 [FIRE_DAMAGE_MULTIPLIER]（90%）。 */
+    private fun isFireDamage(source: DamageSource): Boolean =
+        source.`is`(DamageTypes.LAVA) || source.`is`(DamageTypes.IN_FIRE) ||
+            source.`is`(DamageTypes.ON_FIRE) || source.`is`(DamageTypes.HOT_FLOOR)
+
+    /** 受伤额外行为——过载反击：短窗口内实际受伤害累计超阈值，触发冲击波（伤害+强击退），把站桩玩家弹开。 */
+    private fun accumulateOverload(amount: Float) {
+        val now = tickCount
+        if (now - overloadWindowStart >= OVERLOAD_WINDOW_TICKS) {
+            overloadWindowStart = now
+            overloadDamage = 0.0F
+        }
+        overloadDamage += amount
+        if (overloadCooldown > 0) overloadCooldown--
+        if (overloadDamage >= OVERLOAD_THRESHOLD && overloadCooldown <= 0) {
+            triggerOverload()
+            overloadDamage = 0.0F
+            overloadCooldown = OVERLOAD_COOLDOWN
+        }
+    }
+
+    /** 过载冲击波：以核心为中心扩张，伤害并击退半径 [OVERLOAD_RADIUS] 内非敌对实体。 */
+    private fun triggerOverload() {
+        val level = level()
+        if (level.isClientSide) return
+        val origin = beamOrigin()
+        val box = AABB(origin, origin).inflate(OVERLOAD_RADIUS)
+        for (victim in level.getEntitiesOfClass(LivingEntity::class.java, box)) {
+            if (victim === this || victim is Enemy) continue
+            victim.hurt(level.damageSources().mobAttack(this), OVERLOAD_DAMAGE)
+            val kb = victim.position().subtract(origin)
+            victim.knockback(OVERLOAD_KNOCKBACK, kb.x, kb.z)
+        }
+        // 冲击波粒子（辐射状 END_ROD）+ 音效
+        for (k in 0 until 40) {
+            val ang = random.nextDouble() * Math.PI * 2.0
+            val r = random.nextDouble() * OVERLOAD_RADIUS
+            spawnParticle(level, ParticleTypes.LARGE_SMOKE,
+                origin.x + cos(ang) * r, origin.y + (random.nextDouble() - 0.5) * 3.0, origin.z + sin(ang) * r,
+                0.0, 0.1, 0.0)
+        }
+        level.playSound(null, blockPosition(), HexSounds.CAST_FAILURE, SoundSource.HOSTILE, 1.8F, 1.4F)
     }
 
     /** 免疫击退：任何来源的击退都忽略。 */
@@ -1020,14 +1182,37 @@ class UrCircleEntity(entityType: EntityType<out Mob>, level: Level) : Mob(entity
         const val BACKLASH_THRESHOLD = 5
         /** 反向过度施法：两次积累的最小间隔（tick，防同一施法被多次计数）。 */
         const val BACKLASH_TICK_INTERVAL = 2
-        /** 仇恨实体列表有效距离（格），超出即遗忘。 */
-        const val HATE_RANGE = 32.0
+        /** 仇恨实体列表有效距离（格），超出即遗忘（比索敌扫描范围更大，锁过的目标记得更久）。 */
+        const val HATE_RANGE = 128.0
         /** 下属死亡对大环的反噬直伤（每击败一个下属扣这么多血）。 */
         const val SERVANT_DEATH_DAMAGE = 5.0F
         /** 可打断技能吟唱时，赤道/黄道面绕各自半径轴旋转的角速度（度/tick）。 */
         const val CHANNEL_TUMBLE_SPEED = 5.0F
-        /** 大环单次受到的伤害上限（格外的伤害被削掉，不进入结算）。 */
-        const val MAX_HIT_DAMAGE = 35.0F
+        // ---- 限伤（软上限 + DPS 窗口）----
+        /** 单发软上限：单次伤害超过此值的部分只按 [DAMAGE_OVERFLOW_MULTIPLIER] 结算。 */
+        const val SOFT_HIT_CAP = 35.0F
+        /** 单发超出部分的结算比例（20%）。 */
+        const val DAMAGE_OVERFLOW_MULTIPLIER = 0.2F
+        /** DPS 窗口时长（tick，1 秒=20）。 */
+        const val DPS_WINDOW_TICKS = 20
+        /** 每窗口累计伤害上限（每秒约 70 点）。 */
+        const val DPS_CAP_PER_WINDOW = 70.0F
+        // ---- 伤害免疫/减免 ----
+        /** 火焰系伤害减免倍率（90% 减免 → 0.1）。 */
+        const val FIRE_DAMAGE_MULTIPLIER = 0.1F
+        // ---- 受伤额外行为：过载反击 ----
+        /** 过载窗口时长（tick）。 */
+        const val OVERLOAD_WINDOW_TICKS = 20
+        /** 过载阈值：窗口内实际受伤害累计达此值触发冲击波。 */
+        const val OVERLOAD_THRESHOLD = 40.0F
+        /** 过载冲击波伤害。 */
+        const val OVERLOAD_DAMAGE = 10.0F
+        /** 过载冲击波半径（格）。 */
+        const val OVERLOAD_RADIUS = 8.0
+        /** 过载冲击波击退强度。 */
+        const val OVERLOAD_KNOCKBACK = 2.0
+        /** 过载反击冷却（tick）。 */
+        const val OVERLOAD_COOLDOWN = 100
         // ---- 死亡演出时序（参考末影龙）----
         /** 死亡演出总部件数（内圈促动石 14 + 外圈石板 12；核心单独处理）。 */
         const val TOTAL_PARTS = 26
@@ -1055,6 +1240,18 @@ class UrCircleEntity(entityType: EntityType<out Mob>, level: Level) : Mob(entity
         val AMETHYST_BREAK = BlockParticleOption(ParticleTypes.BLOCK, Blocks.AMETHYST_BLOCK.defaultBlockState())
         /** 环刃风暴的部件/半径最大放大倍率（满吟唱时）。 */
         const val RING_SPIN_MAX_SCALE = 6.0F
+        /** 飞行部件回避：外圈采样点数。 */
+        const val RING_CLEAR_SAMPLES = 12
+        /** 飞行部件回避：内圈（促动石）采样点数。 */
+        const val RING_INNER_SAMPLES = 8
+        /** 飞行部件回避：垂直覆盖 = 外圈半径 × 此比例（黄道面倾斜 ±半径×sin23°≈0.4×半径）。 */
+        const val RING_THICKNESS_RATIO = 0.5
+        /** 飞行部件回避：垂直覆盖下限（格）。 */
+        const val MIN_RING_THICKNESS = 2
+        /** 飞行部件回避：垂直覆盖上限（格，防体积放大后采样爆炸）。 */
+        const val MAX_RING_THICKNESS = 10
+        /** 飞行部件回避：外圈半径外加的安全边距（格，抵消部件半宽）。 */
+        const val RING_CLEAR_MARGIN = 0.8
         fun registerAttributes(): AttributeSupplier.Builder = createMobAttributes().add(Attributes.MAX_HEALTH, 500.0).add(Attributes.ARMOR, 20.0).add(Attributes.ARMOR_TOUGHNESS, 10.0)
     }
 }

@@ -65,14 +65,17 @@ class SlateProjectile(type: EntityType<SlateProjectile>, level: Level) : Abstrac
     override fun onHitBlock(result: BlockHitResult) {
         super.onHitBlock(result)
         if (!level().isClientSide) {
-            // 命中处炸出 3×3×3 的坑 + 爆炸音效（不可破坏方块除外）
-            craterAround(level(), result.blockPos, this)
+            // 命中处炸出 3×3×3 的坑 + 爆炸音效（不可破坏方块除外）：
+            // 不破坏 HexMod 紫水晶/板岩类方块、破坏不掉落、命中把一部分方块转化为紫水晶/板岩
+            craterAround(level(), result.blockPos, this, drop = false, skipHexStones = true, convertChance = CONVERT_CHANCE)
             discard()
         }
     }
 
     companion object {
         const val DAMAGE = 8.0F
+        /** 命中方块时把一部分方块转化为紫水晶/板岩的概率（0~1）。 */
+        const val CONVERT_CHANCE = 0.4F
         val PATTERN: EntityDataAccessor<CompoundTag> = SynchedEntityData.defineId(SlateProjectile::class.java, EntityDataSerializers.COMPOUND_TAG)
         val PATTERN_KEY: String = HexMob.id("pattern").toString()
     }

@@ -31,8 +31,8 @@ class CubeRenderer(id: ResourceLocation): PartRenderer(id) {
         }
         val model: BakedModel = context.modelManager.getModel(ModelResourceLocation(cube.modelId, effectiveVariant(cube)))
         poseStack.pushPose()
-        // 环刃风暴：部件体积随放大倍率膨胀（绕中心缩放）
-        val s = circle.ringSpinScale()
+        // 环刃风暴 + 服务端配置体积倍率：部件体积随总放大倍率膨胀（绕中心缩放）
+        val s = circle.totalScale()
         val w = cube.bbWidth * s
         val h = cube.bbHeight * s
         poseStack.translate(-w / 2.0, -h / 2.0, -w / 2.0)

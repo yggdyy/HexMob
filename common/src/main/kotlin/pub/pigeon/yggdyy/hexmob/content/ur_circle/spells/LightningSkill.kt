@@ -5,8 +5,11 @@ import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.world.damagesource.DamageSource
 import net.minecraft.world.entity.EntityType
+import net.minecraft.world.level.Level
 import pub.pigeon.yggdyy.hexmob.content.ur_circle.UrCircleEntity
 import pub.pigeon.yggdyy.hexmob.util.spawnParticle
+import kotlin.math.cos
+import kotlin.math.sin
 
 /**
  * 【天罚】Lightning——对每一个仇恨目标召唤一道闪电（可多目标同时劈）。
@@ -61,16 +64,32 @@ class LightningSkill : UrCircleSkill("lightning", 60) {
     override fun cast(circle: UrCircleEntity) {
         val level = circle.level()
         if (level.isClientSide) return
+        // 逐个仇恨目标劈下
         for (t in circle.currentHated().take(MAX_TARGETS)) {
-            val bolt = EntityType.LIGHTNING_BOLT.create(level) ?: continue
-            bolt.moveTo(t.x, t.y, t.z, 0.0F, 0.0F)
-            level.addFreshEntity(bolt)
+            spawnBolt(level, t.x, t.y, t.z)
         }
+        // 以自己为中心环状再劈一圈（数目增多），半径随体积放大
+        val center = circle.position().add(0.0, 1.0, 0.0)
+        val radius = RING_BOLT_RADIUS * circle.totalScale()
+        for (k in 0 until RING_BOLTS) {
+            val ang = Math.PI * 2.0 * k / RING_BOLTS
+            spawnBolt(level, center.x + cos(ang) * radius, center.y, center.z + sin(ang) * radius)
+        }
+    }
+
+    private fun spawnBolt(level: Level, x: Double, y: Double, z: Double) {
+        val bolt = EntityType.LIGHTNING_BOLT.create(level) ?: return
+        bolt.moveTo(x, y, z, 0.0F, 0.0F)
+        level.addFreshEntity(bolt)
     }
 
     companion object {
         /** 最多同时劈几个仇恨目标。 */
         const val MAX_TARGETS = 12
+        /** 以自己为中心环状劈的闪电数。 */
+        const val RING_BOLTS = 10
+        /** 环状闪电半径（格，随体积放大）。 */
+        const val RING_BOLT_RADIUS = 8.0
         /** 打断阈值：单次原始伤害 ≥30 才打断。 */
         const val INTERRUPT_THRESHOLD = 30.0F
         /** 吟唱期间伤害减免倍率。 */
