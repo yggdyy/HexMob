@@ -69,20 +69,21 @@ object HexMobEntitySpawns {
             HexMob.LOGGER.info("[Spawn] 正在把守卫写进 crystal_spikes 生成权表")
             properties.getSpawnProperties().addSpawn(
                 MobCategory.MONSTER,
-                MobSpawnSettings.SpawnerData(HexMobEntities.GUARD_ARCHER.get(), 30, 1, 2),
+                MobSpawnSettings.SpawnerData(HexMobEntities.GUARD_ARCHER.get(), 100, 3, 8),
             )
             properties.getSpawnProperties().addSpawn(
                 MobCategory.MONSTER,
-                MobSpawnSettings.SpawnerData(HexMobEntities.GUARD_BRUTE.get(), 30, 1, 2),
+                MobSpawnSettings.SpawnerData(HexMobEntities.GUARD_BRUTE.get(), 100, 3, 8),
             )
             properties.getSpawnProperties().addSpawn(
                 MobCategory.MONSTER,
-                MobSpawnSettings.SpawnerData(HexMobEntities.GUARD_GOLEM.get(), 10, 1, 1),
+                MobSpawnSettings.SpawnerData(HexMobEntities.GUARD_GOLEM.get(), 30, 1, 3),
             )
         }
 
         // 出生点规则：自然生成的先决条件。
         // 判定无条件通过 → 白天/夜晚/任意亮度/任意方块都刷（守卫不烧不惧光）。
+        var placementProbeLogged = false
         listOf(
             HexMobEntities.GUARD_ARCHER.get(),
             HexMobEntities.GUARD_BRUTE.get(),
@@ -92,7 +93,14 @@ object HexMobEntitySpawns {
                 { type },
                 SpawnPlacements.Type.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
-                SpawnPlacements.SpawnPredicate { _, _, _, _, _ -> true },
+                SpawnPlacements.SpawnPredicate { _, _, _, _, _ ->
+                    // 探针：服务器真正开始用此规则尝试生成守卫时打一条日志（查"没自然生成"用）
+                    if (!placementProbeLogged) {
+                        placementProbeLogged = true
+                        HexMob.LOGGER.info("[Spawn] 守卫生成判定首次被调用（服务器已开始尝试生成守卫）")
+                    }
+                    true
+                },
             )
         }
         HexMob.LOGGER.info("[Spawn] 守卫放置规则注册完成：archer/brute/golem")

@@ -50,7 +50,8 @@ import pub.pigeon.yggdyy.hexmob.HexMob
 import pub.pigeon.yggdyy.hexmob.api.entity.FlickeringEntity
 import pub.pigeon.yggdyy.hexmob.config.HexMobServerConfig
 import pub.pigeon.yggdyy.hexmob.content.IHMMultipartEntity
-import pub.pigeon.yggdyy.hexmob.content.guard.CrystalGuardEntity
+import pub.pigeon.yggdyy.hexmob.content.guard.GuardDormant
+import pub.pigeon.yggdyy.hexmob.content.guard.HexMobGuard
 import pub.pigeon.yggdyy.hexmob.content.ur_circle.subentities.CubePart
 import pub.pigeon.yggdyy.hexmob.content.ur_circle.subentities.SlatePart
 import pub.pigeon.yggdyy.hexmob.content.ur_circle.servant.UrCircleServant
@@ -1054,8 +1055,8 @@ class UrCircleEntity(entityType: EntityType<out Mob>, level: Level) : Mob(entity
         val vex = level().getEntitiesOfClass(UrCircleServant::class.java, box) {
             it.isAlive && it.getOwner() === this
         }.size
-        val guards = level().getEntitiesOfClass(CrystalGuardEntity::class.java, box) {
-            it.isAlive && it.isSummonedBy(this)
+        val guards = level().getEntitiesOfClass(Mob::class.java, box) {
+            it.isAlive && it is HexMobGuard && it.isSummonedBy(this)
         }.size
         return vex + guards
     }
@@ -1124,12 +1125,17 @@ class UrCircleEntity(entityType: EntityType<out Mob>, level: Level) : Mob(entity
         }
     }
 
-    private fun spawnGuardPet(type: EntityType<out CrystalGuardEntity>, pos: Vec3) {
+    private fun spawnGuardPet(type: EntityType<*>, pos: Vec3) {
         val level = level()
-        val guard = type.create(level) ?: return
-        guard.setPos(pos.x, pos.y, pos.z)
-        guard.setSummoner(this)
-        level.addFreshEntity(guard)
+        val entity = type.create(level) ?: return
+        if (entity is HexMobGuard) {
+            val e = entity as Entity
+            e.setPos(pos.x, pos.y, pos.z)
+            entity.setSummoner(this)
+            // 大环召唤：补发武器/装备（type.create 不经 finalizeSpawn，否则守卫裸手）
+            (entity as? GuardDormant)?.equipOnSummon()
+            level.addFreshEntity(e)
+        }
     }
 
     // ---- 仇恨实体列表（多目标） ----

@@ -6,6 +6,7 @@ import dev.architectury.registry.item.ItemPropertiesRegistry
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.SpawnEggItem
+import pub.pigeon.yggdyy.hexmob.client.HexMobGaslightingTracker
 
 object HexMobItemProperties {
     fun init() {
@@ -14,13 +15,13 @@ object HexMobItemProperties {
             if (ItemSlate.hasPattern(stack)) 1f else 0f
         }
 
-        // 淬灵媒质立方：材质随世界时间循环换 3 帧（每 12 tick 一帧 → 1.8s 一轮）
+        // 淬灵媒质立方：煤气灯换皮（hexcasting 淬灵晶碎片同款）——
+// 相位 = GaslightingTracker 计数 % 3；盯着看不动，不看 40 tick 悄悄换一档
         ItemPropertiesRegistry.register(
             HexMobItems.EVERYTHING_IN_NOW.get(),
             ResourceLocation("hexmob", "phase"),
-        ) { _, level, _, _ ->
-            if (level == null) 0f
-            else ((level.gameTime / 12L) % 3L).toFloat()
+        ) { _, _, _, _ ->
+            Math.abs(HexMobGaslightingTracker.getGaslightingAmount() % 3).toFloat()
         }
 
         // Spawn eggs are drawn as a tinted vanilla egg shape; without an item

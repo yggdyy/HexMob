@@ -5,7 +5,7 @@ import at.petrak.hexcasting.api.casting.mishaps.MishapDivideByZero
 import at.petrak.hexcasting.api.casting.mishaps.MishapEntityTooFarAway
 import at.petrak.hexcasting.api.casting.mishaps.MishapImmuneEntity
 import at.petrak.hexcasting.api.casting.mishaps.MishapNotEnoughMedia
-import at.petrak.hexcasting.api.casting.mishaps.MishapTooManyCloseParens
+import at.petrak.hexcasting.api.casting.mishaps.MishapInvalidPattern
 import net.minecraft.network.chat.Component
 import net.minecraft.util.RandomSource
 import net.minecraft.world.effect.MobEffect
@@ -51,8 +51,9 @@ object UrCircleStatusTable {
         { circle -> MishapEntityTooFarAway(circle) },
         // 除零：纯红色报错文案
         { MishapDivideByZero(Component.literal("1"), Component.literal("0")) },
-        // 括号过多：纯红色报错文案
-        { MishapTooManyCloseParens() },
+        // 格式错误（占位事故：0.11.3 的 MishapTooManyCloseParens 在 0.11.4 改名 MishapNeedsParens，
+        // 两边版本各缺一个类名 → 用两版都有的 MishapInvalidPattern 无参版代替）：纯红色报错文案
+        { MishapInvalidPattern() },
     )
 
     fun randomDebuff(random: RandomSource): UrCircleDebuff = weightedRandom(debuffs, random)

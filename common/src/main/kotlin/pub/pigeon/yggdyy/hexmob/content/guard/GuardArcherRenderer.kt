@@ -1,17 +1,19 @@
 package pub.pigeon.yggdyy.hexmob.content.guard
 
+import net.minecraft.client.model.IllagerModel
 import net.minecraft.client.model.geom.ModelLayers
 import net.minecraft.client.renderer.entity.EntityRendererProvider
-import net.minecraft.client.renderer.entity.MobRenderer
+import net.minecraft.client.renderer.entity.IllagerRenderer
 import net.minecraft.client.renderer.entity.layers.ItemInHandLayer
 import net.minecraft.resources.ResourceLocation
 import pub.pigeon.yggdyy.hexmob.HexMob
 
-/** 弓箭守卫渲染器：掠夺者几何模型 + guard_archer.png（贴图可直接改），手持弩（不掉落）。 */
+/** 板岩弩手渲染器：**原版掠夺者模型/渲染器**（含端弩、拉弦、庆典全部原版动画）+ 玩家贴图替换。
+ * 武器渲染层（ItemInHandLayer）显式加上：实测不手动加则手持武器不渲染。 */
 class GuardArcherRenderer(context: EntityRendererProvider.Context) :
-    MobRenderer<GuardArcher, GuardIllagerModel<GuardArcher>>(
+    IllagerRenderer<GuardArcher>(
         context,
-        GuardIllagerModel(context.bakeLayer(ModelLayers.PILLAGER)),
+        IllagerModel(context.bakeLayer(ModelLayers.PILLAGER)),
         0.5F
     ) {
     init {

@@ -1,17 +1,19 @@
 package pub.pigeon.yggdyy.hexmob.content.guard
 
+import net.minecraft.client.model.IllagerModel
 import net.minecraft.client.model.geom.ModelLayers
 import net.minecraft.client.renderer.entity.EntityRendererProvider
-import net.minecraft.client.renderer.entity.MobRenderer
+import net.minecraft.client.renderer.entity.IllagerRenderer
 import net.minecraft.client.renderer.entity.layers.ItemInHandLayer
 import net.minecraft.resources.ResourceLocation
 import pub.pigeon.yggdyy.hexmob.HexMob
 
-/** 斧头守卫渲染器：卫道士几何模型 + guard_brute.png（贴图可直接改），手持铁斧（不掉落）。 */
+/** 板岩兵渲染器：**原版卫道士模型/渲染器**（含挥斧攻击动画）+ 玩家贴图替换。
+ * 武器渲染层（ItemInHandLayer）显式加上：实测不手动加则手持武器不渲染。 */
 class GuardBruteRenderer(context: EntityRendererProvider.Context) :
-    MobRenderer<GuardBrute, GuardIllagerModel<GuardBrute>>(
+    IllagerRenderer<GuardBrute>(
         context,
-        GuardIllagerModel(context.bakeLayer(ModelLayers.VINDICATOR)),
+        IllagerModel(context.bakeLayer(ModelLayers.VINDICATOR)),
         0.5F
     ) {
     init {

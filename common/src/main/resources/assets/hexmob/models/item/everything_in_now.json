@@ -1,5 +1,4 @@
 {
-  "parent": "minecraft:item/generated",
   "overrides": [
     {
       "model": "hexmob:item/everything_in_now_0",
@@ -19,8 +18,5 @@
         "hexmob:phase": 2.0
       }
     }
-  ],
-  "textures": {
-    "layer0": "hexmob:item/everything_in_now_0"
-  }
+  ]
 }
