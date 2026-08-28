@@ -3,6 +3,7 @@ package pub.pigeon.yggdyy.hexmob.registry
 import at.petrak.hexcasting.common.items.storage.ItemSlate
 import dev.architectury.registry.client.rendering.ColorHandlerRegistry
 import dev.architectury.registry.item.ItemPropertiesRegistry
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.SpawnEggItem
 
@@ -11,6 +12,15 @@ object HexMobItemProperties {
         ItemPropertiesRegistry.register(HexMobBlocks.STIMULATED_SLATE_ITEM.get(), ItemSlate.WRITTEN_PRED
         ) { stack, _, _, _ ->
             if (ItemSlate.hasPattern(stack)) 1f else 0f
+        }
+
+        // 淬灵媒质立方：材质随世界时间循环换 3 帧（每 12 tick 一帧 → 1.8s 一轮）
+        ItemPropertiesRegistry.register(
+            HexMobItems.EVERYTHING_IN_NOW.get(),
+            ResourceLocation("hexmob", "phase"),
+        ) { _, level, _, _ ->
+            if (level == null) 0f
+            else ((level.gameTime / 12L) % 3L).toFloat()
         }
 
         // Spawn eggs are drawn as a tinted vanilla egg shape; without an item

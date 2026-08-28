@@ -6,6 +6,7 @@ import net.minecraft.core.registries.Registries
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.SpawnEggItem
 import pub.pigeon.yggdyy.hexmob.HexMob
+import pub.pigeon.yggdyy.hexmob.content.now.EverythingInNowItem
 import pub.pigeon.yggdyy.hexmob.content.ur_circle.UrCircleCoreItem
 
 object HexMobItems {
@@ -71,5 +72,9 @@ object HexMobItems {
     /** 大环核心：Boss 战利品（备用物品类，见 UrCircleCoreItem）。 */
     val UR_CIRCLE_CORE: DeferredSupplier<UrCircleCoreItem> = ITEMS.register("ur_circle_core") {
         UrCircleCoreItem(Item.Properties())
+    }
+    /** 淬灵媒质立方：随"当下"流转的装饰性物品，材质随世界时间循环换 3 帧（hexmob:phase）。 */
+    val EVERYTHING_IN_NOW: DeferredSupplier<Item> = ITEMS.register("everything_in_now") {
+        EverythingInNowItem(Item.Properties())
     }
 }

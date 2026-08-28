@@ -29,7 +29,7 @@ object HexMobServerConfig {
 
     /** 大环体积倍率上下限。 */
     const val MIN_UR_CIRCLE_SCALE = 0.25F
-    const val MAX_UR_CIRCLE_SCALE = 4.0F
+    const val MAX_UR_CIRCLE_SCALE = 16.0F
 
     /** 命令热调整大环体积倍率：改值 → 落盘 → 广播给所有在线玩家（客户端渲染同步）。 */
     @JvmStatic
@@ -96,7 +96,7 @@ object HexMobServerConfig {
         var cryingAmethystSpawnRate: Double = 0.5
         /** 大环体积倍率（0.25~4.0，默认 1.0 = 现状；渲染/半径/碰撞一致缩放）。 */
         @Tooltip
-        var urCircleScale: Float = 1.0F
+        var urCircleScale: Float = 4.0F
         fun encode(buf: FriendlyByteBuf) {
             buf.writeLong(opTransformStimulatedPatternCost)
             buf.writeDouble(opStimulatedSlateMediaDiscount)

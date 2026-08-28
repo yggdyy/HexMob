@@ -44,7 +44,10 @@ class UrCircleArenaStructure(
             val ground = getLowestY(context, cx, cz, 7, 7)
             // 离地 18 格悬浮：大环与清空区整块升空
             val cy = ground + FLOAT_HEIGHT
-            builder.addPiece(UrCircleArenaPiece(context.structureTemplateManager(), nbtId, BlockPos(cx, cy, cz), rotation))
+            // 模板按原点往 +x/+z 方向铺 0..10（11×11），把原点往回偏 HALF_SPAN，
+            // 祭坛整体与 boss（origin+5,+3,+5）才能正好落在区块中央。
+            val origin = BlockPos(cx - HALF_SPAN, cy, cz - HALF_SPAN)
+            builder.addPiece(UrCircleArenaPiece(context.structureTemplateManager(), nbtId, origin, rotation))
         }
     }
 
@@ -53,6 +56,8 @@ class UrCircleArenaStructure(
     companion object {
         /** 祭坛离地悬浮高度（格）。 */
         const val FLOAT_HEIGHT = 18
+        /** 模板半宽：11×11 布局的原点偏移量（让 boss 精确落于区块中心）。 */
+        const val HALF_SPAN = 5
         val CODEC: Codec<UrCircleArenaStructure> = RecordCodecBuilder.create { b ->
             b.group(
                 settingsCodec(b),

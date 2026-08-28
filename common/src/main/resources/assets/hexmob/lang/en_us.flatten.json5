@@ -56,6 +56,19 @@
           "0": "After a surpassing enlightenment, I came to command media and thought beyond the common measure. Inspired by the Iota Sheep, I set out to shape another creature that could bear an iota. Reading through the notes $(thing)Whiteord/$ left behind, I fused a quenched amethyst into a willing allay — and so the quench allay was born. It holds an iota like the Iota Sheep, yet can be steered by spells with ease, and may even cast in its own name.",
           "1": "Related patterns: $(l:hexcasting:patterns/spells/quench_allay)Quench Allay Patterns$(/l).",
           "2": "A quench allay, wrought by the Quenched Amethyst Shard."
+        },
+        "crystal_spikes": {
+          "": "The Crystal Land",
+          "0": "What is this strange place? The surface is paved in slate, scattered with what seem to be statues, and great amethyst spikes thrust up from the earth. This looks like no work of nature — and yet no work of man either.$(br2)It is as though... a land under a curse. The place may yet hold many secrets, but out of caution, I had no intention of prying.",
+          "1": "Yet I returned. I crossed the waste, and those \"statues\" never stirred — until I saw the ring floating upon the horizon. Then, all at once, their stances came alive: a slumbering legion, woken by a single signal.$(br2)On that ring, see $(l:hexcasting:hexmob/ur_circle)the Ur Circle$(/l).",
+          "2": "A sleeping slate soldier. They are soldiers and sentinels alike; until their master wakes, they are as unremarkable as the rocks of this land."
+        },
+        "ur_circle": {
+          "": "Ur Circle",
+          "0": "\u201cThe reflection of supreme authority in reality, the earthly manifestation of eternal glory — life, death, the whole of this present moment, yet far from the whole of this world; the Great Work wrought by sages of old, a creation equal to the veil spanning the heart of the mind, formed by human hands yet long inscribed in the grand blueprint.$(br2)Bloom, bloom, bloom the eternal glory.",
+          "1": "It brings neither hope nor an ending; a grail filled with the blood of the self-existent, bearing every good of this world, receiving every evil of this world — the miracle that creates miracles! The Great Ring!\u201d — in the great enlightenment I heard this hymn, and I have wondered more than once what it exalts. Now, I know.",
+          "2": "Deep in the Crystal Land, upon a floating altar, I met the very thing the hymn exalts. It slept in mid-air like a forgotten star.$(br2)It wakes as you draw near — great stones dance in the air; it hurls slate, rends the earth, and looses beams of light, while attendants gather about it. Projectiles and explosions barely touch it, and entity iotas fail against it in the strangest way.",
+          "3": "It is as though exalted knowledge itself were flaunting its power in pride. To common eyes it is but an ornate tower of slate and amethyst — yet as the \"reflection of authority\", something about this very hour and its world must yet hide a secret. Someday I shall learn what it is. Perhaps it will begin with defeating it?"
         }
       }
     },
@@ -132,16 +145,34 @@
       "amethyst_silverfish": "Amethyst Silverfish",
       "iota_sheep": "Iota Sheep",
       "quench_allay": "Quench Allay",
-      "ur_circle": "Ur Circle"
+      "ur_circle": "Ur Circle",
+      "ur_circle_servant": "Ring Servant",
+      "ur_circle_serpent": "Impetus Serpent",
+      "slate_projectile": "Slate Shot",
+      "guard_archer": "Slate Crossbowman",
+      "guard_brute": "Slate Soldier",
+      "guard_golem": "Slate Golem"
     }
   },
   "item": {
     "hexmob": {
       "iota_sheep_spawn_egg": "Iota Sheep Spawn Egg",
-      "quench_allay_spawn_egg": "Quenched Allay Spawn Egg"
+      "quench_allay_spawn_egg": "Quenched Allay Spawn Egg",
+      "guard_archer_spawn_egg": "Slate Crossbowman Spawn Egg",
+      "guard_brute_spawn_egg": "Slate Soldier Spawn Egg",
+      "guard_golem_spawn_egg": "Slate Golem Spawn Egg",
+      "everything_in_now": "Quenched Media Cube"
     }
   },
   "itemGroup": {
     "hexmob": "Hex Mob"
+  },
+  "advancements": {
+    "hexcasting": {
+      "crystal_spikes": {
+        "title": "Visiting the Crystal Land",
+        "description": "Set foot on the land cursed by the earth."
+      }
+    }
   }
 }
