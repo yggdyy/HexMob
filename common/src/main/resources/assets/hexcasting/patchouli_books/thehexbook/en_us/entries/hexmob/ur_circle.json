@@ -1,0 +1,25 @@
+{
+  "name": "hexmob.book.hexmob.ur_circle",
+  "category": "hexcasting:hexmob",
+  "icon": "hexmob:ur_circle_core",
+  "sortnum": 2,
+  "advancement": "hexcasting:enlightenment",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "hexmob.book.hexmob.ur_circle.0"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "hexmob.book.hexmob.ur_circle.1"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "hexmob.book.hexmob.ur_circle.2"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "hexmob.book.hexmob.ur_circle.3"
+    }
+  ]
+}

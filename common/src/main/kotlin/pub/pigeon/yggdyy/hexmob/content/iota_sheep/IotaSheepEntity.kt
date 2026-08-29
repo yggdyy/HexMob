@@ -20,6 +20,7 @@ import net.minecraft.server.level.ServerLevel
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.sounds.SoundSource
 import net.minecraft.world.DifficultyInstance
+import net.minecraft.world.entity.AgeableMob
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.LivingEntity
@@ -36,6 +37,7 @@ import pub.pigeon.yggdyy.hexmob.api.entity.IotaEntity
 import pub.pigeon.yggdyy.hexmob.api.entity.defineIotaAccessor
 import pub.pigeon.yggdyy.hexmob.api.entity.emptyIotaTag
 import pub.pigeon.yggdyy.hexmob.api.sheep.IotaSheepBehaviors
+import pub.pigeon.yggdyy.hexmob.registry.HexMobEntities
 
 class IotaSheepEntity(entityType: EntityType<IotaSheepEntity>, world: Level) : Sheep(entityType, world), IotaEntity {
 
@@ -215,6 +217,19 @@ class IotaSheepEntity(entityType: EntityType<IotaSheepEntity>, world: Level) : S
             spawnAtLocation(knot)
         }
         iotaFeedback(true)
+    }
+
+    // ---- 繁殖：后代仍是咒念羊并遗传 iota（引诱/繁殖食物维持原版小麦，不覆写 registerGoals） ----
+
+    /** 后代为咒念羊；若任一亲本怀有 iota，随机继承其一（复制，不共享 NBT）。 */
+    override fun getBreedOffspring(level: ServerLevel, other: AgeableMob): IotaSheepEntity {
+        val baby = HexMobEntities.IOTA_SHEEP.get().create(level)
+            ?: throw IllegalStateException("Failed to create iota sheep")
+        val donor = if (random.nextBoolean()) this else other
+        if (donor is IotaSheepEntity && donor.hasIota()) {
+            baby.setIotaNbt(donor.getIotaNbt().copy())
+        }
+        return baby
     }
 
     // Natural-spawn: give a wild sheep a random iota so it actually shows

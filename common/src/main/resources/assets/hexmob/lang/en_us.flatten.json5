@@ -11,7 +11,13 @@
             "": "Transform Stimulated Pattern",
             "0": "Accept the position of a $(l:hexcasting:items/stimulated_slate)stimulated slate$(/l), a $(l:hexcasting:hexmob/stimulated_pattern)stimulated pattern entity$(/l) and a pattern. Try to transform the stimulated pattern entity into the stimulated slate. Cost 10 amethyst dust",
             "1": "If the given pattern has the save stroke as the pattern of the stimulated pattern entity, the entity will discard and the stimulated slate will be written with the very pattern. Otherwise, the entity will lose with 5 heath point while nothing other happen."
-          }
+        },
+        "quench_allay": {
+          "": "Quench Allay Patterns",
+          "0": "Accept an allay; cost one Quenched Amethyst Shard and transmute it into a quench allay, keeping what it carries.",
+          "1": "Accept a quench allay and a vector; command it to fly to that point.",
+          "2": "Accept a quench allay and a list of iotas; it casts that spell itself with its own media."
+        }
         },
         great_spells: {
           /*dummy_great_spells: {
@@ -31,28 +37,52 @@
         "description": "This category contains the records of amazing mobs I collected from all over the world.",
         "stimulated_pattern": {
           "": "Stimulated Pattern",
-          "0": "A stimulated pattern is a magical creature that appears like a hex pattern floating in the air. Those friendly creatures can be seen in some amethyst geode. $(br)A hexer called Whiteord conducted several researches on them and the discovers can be seen at $(l:hexcasting:items/stimulated_slate)Stimulated Slate$(/l) and $(l:hexcasting:patterns/spells/transform_stimulated_pattern)Transform Stimulated Pattern$(/l).",
+          "0": "A stimulated pattern is a magical creature that appears like a hex pattern floating in the air. Those friendly creatures can be seen in some amethyst geode. $(br)A hexer called $(thing)Whiteord/$ conducted several researches on them and the discovers can be seen at $(l:hexcasting:items/stimulated_slate)Stimulated Slate$(/l) and $(l:hexcasting:patterns/spells/transform_stimulated_pattern)Transform Stimulated Pattern$(/l).",
           "1": "A stimulated pattern in a amethyst geode."
         },
         "crying_amethyst": {
           "": "Crying Amethyst",
-          "0": "These mysterious animals (I am not sure whether they are really \"animals\"), firstly recorded by hexer cang_hai_yi_su, sometimes appear in amethyst geodes, looks just like a budding amethyst and a amethyst bud on which, have no threaten but will drop some amethyst when killed.$(br)If hit, a crying amethyst may cry out like a ghast. What a horrible sound, I wonder what have those things undergone...",
+          "0": "These mysterious animals (I am not sure whether they are really \"animals\"), firstly recorded by hexer $(thing)cang_hai_yi_su/$, sometimes appear in amethyst geodes, looks just like a budding amethyst and a amethyst bud on which, have no threaten but will drop some amethyst when killed.$(br)If hit, a crying amethyst may cry out like a ghast. What a horrible sound, I wonder what have those things undergone...",
           "1": "A crying amethyst in a geode."
         },
         "iota_sheep": {
           "": "Iota Sheep",
-          "0": "These odd sheep frequent the edges of fields, each carrying a single iota knotted into its fleece. The colour of the wool shifts with the type of iota it holds, and shearing one yields a few $(l:hexcasting:items/thought_knot)Thought-Knots$(/l), each holding a copy of that iota.",
-          "1": "The iota isn't merely decoration — the sheep obeys what it stores. A vector sets it wandering toward that point; an entity makes it trail that creature; a list of vectors turns it into a little patrol; any other list simply cycles the colour of its wool. Hexers have taken to leaving iotas on these sheep just to watch them steer."
+          "0": "These odd sheep frequent the edges of fields, each carrying a single iota knotted into its fleece. The colour of the wool shifts with the type of iota it holds, and shearing one yields a few $(l:hexcasting:items/thought_knot)Thought-Knots$(/l), each holding a copy of that iota. As for what they eat... wheat, of course!",
+          "1": "The iota isn't merely decoration — the sheep obeys what it stores. A vector sets it wandering toward that point; an entity makes it trail that creature; a list of vectors turns it into a little patrol; any other list simply cycles the colour of its wool. Hexers have taken to leaving iotas on these sheep just to watch them steer.",
+          "2": "An iota sheep, ready for the shears."
+        },
+        "quench_allay": {
+          "": "Quench Allay",
+          "0": "After a surpassing enlightenment, I came to command media and thought beyond the common measure. Inspired by the Iota Sheep, I set out to shape another creature that could bear an iota. Reading through the notes $(thing)Whiteord/$ left behind, I fused a quenched amethyst into a willing allay — and so the quench allay was born. It holds an iota like the Iota Sheep, yet can be steered by spells with ease, and may even cast in its own name.",
+          "1": "Related patterns: $(l:hexcasting:patterns/spells/quench_allay)Quench Allay Patterns$(/l).",
+          "2": "A quench allay, wrought by the Quenched Amethyst Shard."
+        },
+        "crystal_spikes": {
+          "": "The Crystal Land",
+          "0": "What is this strange place? The surface is paved in slate, scattered with what seem to be statues, and great amethyst spikes thrust up from the earth. This looks like no work of nature — and yet no work of man either.$(br2)It is as though... a land under a curse. The place may yet hold many secrets, but out of caution, I had no intention of prying.",
+          "1": "Yet I returned. I crossed the waste, and those \"statues\" never stirred — until I saw the ring floating upon the horizon. Then, all at once, their stances came alive: a slumbering legion, woken by a single signal.$(br2)On that ring, see $(l:hexcasting:hexmob/ur_circle)the Ur Circle$(/l).",
+          "2": "A sleeping slate soldier. They are soldiers and sentinels alike; until their master wakes, they are as unremarkable as the rocks of this land."
+        },
+        "ur_circle": {
+          "": "Ur Circle",
+          "0": "\u201cThe reflection of supreme authority in reality, the earthly manifestation of eternal glory — life, death, the whole of this present moment, yet far from the whole of this world; the Great Work wrought by sages of old, a creation equal to the veil spanning the heart of the mind, formed by human hands yet long inscribed in the grand blueprint.$(br2)Bloom, bloom, bloom the eternal glory.",
+          "1": "It brings neither hope nor an ending; a grail filled with the blood of the self-existent, bearing every good of this world, receiving every evil of this world — the miracle that creates miracles! The Great Ring!\u201d — in the great enlightenment I heard this hymn, and I have wondered more than once what it exalts. Now, I know.",
+          "2": "Deep in the Crystal Land, upon a floating altar, I met the very thing the hymn exalts. It slept in mid-air like a forgotten star.$(br2)It wakes as you draw near — great stones dance in the air; it hurls slate, rends the earth, and looses beams of light, while attendants gather about it. Projectiles and explosions barely touch it, and entity iotas fail against it in the strangest way.",
+          "3": "It is as though exalted knowledge itself were flaunting its power in pride. To common eyes it is but an ornate tower of slate and amethyst — yet as the \"reflection of authority\", something about this very hour and its world must yet hide a secret. Someday I shall learn what it is. Perhaps it will begin with defeating it?"
         }
       }
     },
   },
   hexcasting: {
+
     action: {
       "hexmob:": {
         /*congratulate: "Congratulate Player",
         "congratulate/great": "Great Congrats!",*/
-        "transform_stimulated_pattern": "Transform Stimulated Pattern"
+        "transform_stimulated_pattern": "Transform Stimulated Pattern",
+        "quench_allay": "Transform Quench Allay",
+        "quench_allay/move": "Marionette's Gambit",
+        "quench_allay/cast": "Puppeteer's Gambit"
       },
       // use this to add shortened versions of pattern names if the full name won't fit in the ingame book
       // you don't need to add an entry for every pattern - the above value will be used as a default
@@ -65,7 +95,9 @@
   },
   "mishap": {
     "hexmob": {
-      "duplicate_stimulated_slate": "Encountered duplicate stimulated slate pattern!"
+      "duplicate_stimulated_slate": "Encountered duplicate stimulated slate pattern!",
+      "flickering_entity": "It should have accepted an entity, but accepted nothing.",
+      "ur_circle_flickering": "It should have accepted an entity, but instead accepted Nature itself."
     }
   },
   text: {
@@ -111,15 +143,36 @@
       "stimulated_pattern": "Stimulated Pattern",
       "crying_amethyst": "Crying Amethyst",
       "amethyst_silverfish": "Amethyst Silverfish",
-      "iota_sheep": "Iota Sheep"
+      "iota_sheep": "Iota Sheep",
+      "quench_allay": "Quench Allay",
+      "ur_circle": "Ur Circle",
+      "ur_circle_servant": "Ring Servant",
+      "ur_circle_serpent": "Impetus Serpent",
+      "slate_projectile": "Slate Shot",
+      "guard_archer": "Slate Crossbowman",
+      "guard_brute": "Slate Soldier",
+      "guard_golem": "Slate Golem"
     }
   },
   "item": {
     "hexmob": {
-      "iota_sheep_spawn_egg": "Iota Sheep Spawn Egg"
+      "iota_sheep_spawn_egg": "Iota Sheep Spawn Egg",
+      "quench_allay_spawn_egg": "Quenched Allay Spawn Egg",
+      "guard_archer_spawn_egg": "Slate Crossbowman Spawn Egg",
+      "guard_brute_spawn_egg": "Slate Soldier Spawn Egg",
+      "guard_golem_spawn_egg": "Slate Golem Spawn Egg",
+      "everything_in_now": "Quenched Media Cube"
     }
   },
   "itemGroup": {
     "hexmob": "Hex Mob"
+  },
+  "advancements": {
+    "hexcasting": {
+      "crystal_spikes": {
+        "title": "Visiting the Crystal Land",
+        "description": "Set foot on the land cursed by the earth."
+      }
+    }
   }
 }

@@ -5,8 +5,10 @@ import net.minecraft.resources.ResourceLocation
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import pub.pigeon.yggdyy.hexmob.config.HexMobServerConfig
+import pub.pigeon.yggdyy.hexmob.content.crystal_spikes.HexMobFeatures
 import pub.pigeon.yggdyy.hexmob.content.iota_sheep.IotaSheepDefaultBehaviors
 import pub.pigeon.yggdyy.hexmob.content.stimulated_pattern.StimulatedSlateBlock
+import pub.pigeon.yggdyy.hexmob.content.ur_circle.spells.HexMobBacklash
 import pub.pigeon.yggdyy.hexmob.networking.HexMobNetworking
 import pub.pigeon.yggdyy.hexmob.registry.*
 
@@ -19,6 +21,7 @@ object HexMob {
     fun init() {
         if(LOGGER.isDebugEnabled) LOGGER.warn("Common Init")
         HexMobServerConfig.init()
+        HexMobCommands.init()
         // Hex actions are registered per-platform in each platform's entrypoint
         // (the common @ExpectPlatform path was not being transformed at runtime).
         // Entities must come before items: the spawn egg's factory resolves
@@ -29,10 +32,14 @@ object HexMob {
         HexMobNetworking.init()
         HexMobEntityAttributes.init()
         HexMobStructurePieceTypes.init()
+        HexMobStructures.init()
+        HexMobFeatures.init()
         HexMobCreativeTab.init()
         HexMobEntitySpawns.init()
         IotaSheepDefaultBehaviors.init()
         CastingEnvironment.addCreateEventListener{env, data -> StimulatedSlateBlock.applyMediaDiscount(env, data)}
+        // 反向过度施法：玩家每施法一次给附近大环积累反噬值（第 5 步）
+        CastingEnvironment.addCreateEventListener{env, _ -> HexMobBacklash.onCast(env)}
     }
     fun initServer() {
         HexMobServerConfig.initServer()

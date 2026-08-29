@@ -12,6 +12,7 @@ import net.minecraft.world.entity.SpawnPlacements
 import net.minecraft.world.level.biome.Biome
 import net.minecraft.world.level.biome.MobSpawnSettings
 import net.minecraft.world.level.levelgen.Heightmap
+import pub.pigeon.yggdyy.hexmob.HexMob
 
 /**
  * Natural spawning for the iota-sheep: a rare, grassland spawn (Option A).
@@ -49,5 +50,59 @@ object HexMobEntitySpawns {
                 MobSpawnSettings.SpawnerData(HexMobEntities.IOTA_SHEEP.get(), 8, 3, 5),
             )
         }
+
+        // 晶刺守卫（弓箭/斧头/傀儡）：crystal_spikes 群系怪生成条目在群系 JSON 的
+        // spawners.monster 里（data/hexmob/worldgen/biome/crystal_spikes.json）。
+        // 这里再走 BiomeModifications 运行时注册一遍（iota 羊同款、已证可行），
+        // 双保险确保带 TerraBlender/数据包群系也能进生成权表。
+        // 日志：确认运行时是否真的匹配到该群系 + 放置规则是否注册。
+        BiomeModifications.addProperties({ ctx ->
+            val key = ctx.getKey()
+            if (key.isPresent && key.get() == ResourceLocation("hexmob", "crystal_spikes")) {
+                HexMob.LOGGER.info("[Spawn] crystal_spikes 匹配到 BiomeModifications，正在添加守卫生成条目")
+                true
+            } else {
+                false
+            }
+        })
+        { _, properties ->
+            HexMob.LOGGER.info("[Spawn] 正在把守卫写进 crystal_spikes 生成权表")
+            properties.getSpawnProperties().addSpawn(
+                MobCategory.MONSTER,
+                MobSpawnSettings.SpawnerData(HexMobEntities.GUARD_ARCHER.get(), 100, 3, 8),
+            )
+            properties.getSpawnProperties().addSpawn(
+                MobCategory.MONSTER,
+                MobSpawnSettings.SpawnerData(HexMobEntities.GUARD_BRUTE.get(), 100, 3, 8),
+            )
+            properties.getSpawnProperties().addSpawn(
+                MobCategory.MONSTER,
+                MobSpawnSettings.SpawnerData(HexMobEntities.GUARD_GOLEM.get(), 30, 1, 3),
+            )
+        }
+
+        // 出生点规则：自然生成的先决条件。
+        // 判定无条件通过 → 白天/夜晚/任意亮度/任意方块都刷（守卫不烧不惧光）。
+        var placementProbeLogged = false
+        listOf(
+            HexMobEntities.GUARD_ARCHER.get(),
+            HexMobEntities.GUARD_BRUTE.get(),
+            HexMobEntities.GUARD_GOLEM.get(),
+        ).forEach { type ->
+            SpawnPlacementsRegistry.register(
+                { type },
+                SpawnPlacements.Type.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                SpawnPlacements.SpawnPredicate { _, _, _, _, _ ->
+                    // 探针：服务器真正开始用此规则尝试生成守卫时打一条日志（查"没自然生成"用）
+                    if (!placementProbeLogged) {
+                        placementProbeLogged = true
+                        HexMob.LOGGER.info("[Spawn] 守卫生成判定首次被调用（服务器已开始尝试生成守卫）")
+                    }
+                    true
+                },
+            )
+        }
+        HexMob.LOGGER.info("[Spawn] 守卫放置规则注册完成：archer/brute/golem")
     }
 }

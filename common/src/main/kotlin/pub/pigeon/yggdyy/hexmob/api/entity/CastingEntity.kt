@@ -22,4 +22,12 @@ interface CastingEntity {
 
     /** How far (in blocks) this entity can reach with its spells. */
     fun getCastingRange(): Double
+
+    /**
+     * Whether this entity counts as enlightened for spellcasting. The vanilla
+     * env only grants enlightenment to players with the advancement; an
+     * entity-based caster opts in by overriding this to true (unlocks great
+     * spells for it).
+     */
+    fun isEnlightened(): Boolean = false
 }

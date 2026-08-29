@@ -1,0 +1,22 @@
+{
+  "overrides": [
+    {
+      "model": "hexmob:item/everything_in_now_0",
+      "predicate": {
+        "hexmob:phase": 0.0
+      }
+    },
+    {
+      "model": "hexmob:item/everything_in_now_1",
+      "predicate": {
+        "hexmob:phase": 1.0
+      }
+    },
+    {
+      "model": "hexmob:item/everything_in_now_2",
+      "predicate": {
+        "hexmob:phase": 2.0
+      }
+    }
+  ]
+}

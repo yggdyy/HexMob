@@ -1,0 +1,30 @@
+{
+  "name": "hexmob.book.patterns.spells.quench_allay",
+  "category": "hexcasting:patterns/spells",
+  "icon": "hexmob:quench_allay_spawn_egg",
+  "entry_color": "54398a",
+  "advancement": "hexcasting:enlightenment",
+  "pages": [
+    {
+      "type": "hexcasting:pattern",
+      "op_id": "hexmob:quench_allay",
+      "input": "allay",
+      "output": "",
+      "text": "hexmob.book.patterns.spells.quench_allay.0"
+    },
+    {
+      "type": "hexcasting:pattern",
+      "op_id": "hexmob:quench_allay/move",
+      "input": "quench_allay, vector",
+      "output": "",
+      "text": "hexmob.book.patterns.spells.quench_allay.1"
+    },
+    {
+      "type": "hexcasting:pattern",
+      "op_id": "hexmob:quench_allay/cast",
+      "input": "quench_allay, list",
+      "output": "",
+      "text": "hexmob.book.patterns.spells.quench_allay.2"
+    }
+  ]
+}

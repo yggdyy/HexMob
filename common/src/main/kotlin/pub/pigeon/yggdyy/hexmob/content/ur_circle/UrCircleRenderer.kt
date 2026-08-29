@@ -5,6 +5,7 @@ import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.entity.EntityRenderer
 import net.minecraft.client.renderer.entity.EntityRendererProvider
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.util.Mth
 import net.minecraft.world.phys.Vec3
 import org.joml.Quaternionf
 import org.joml.Vector3f
@@ -22,7 +23,13 @@ class UrCircleRenderer(val context: EntityRendererProvider.Context) : EntityRend
                 continue
             }
             val p: Vec3 = part.posPrev.lerp(part.posNow, partialTick.toDouble())
-            val deltaP: Vec3 = p.subtract(entity.xo, entity.yo, entity.zo)
+            // PoseStack 的基点是实体的"插值位置"，这里也必须减插值位置；若减上一 tick 的原始位置(xo,yo,zo)，
+            // 移动时整个结构会多出 movement*partialTick 的每帧偏移，表现为大环发抖。
+            val deltaP: Vec3 = p.subtract(
+                Mth.lerp(partialTick.toDouble(), entity.xo, entity.x),
+                Mth.lerp(partialTick.toDouble(), entity.yo, entity.y),
+                Mth.lerp(partialTick.toDouble(), entity.zo, entity.z)
+            )
             val d: Vec3 = part.dirPrev.lerp(part.dirNow, partialTick.toDouble())
             poseStack.pushPose()
             poseStack.translate(deltaP.x, deltaP.y, deltaP.z)

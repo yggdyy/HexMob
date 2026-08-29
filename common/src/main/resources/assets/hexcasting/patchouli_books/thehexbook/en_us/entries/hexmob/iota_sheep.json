@@ -11,6 +11,11 @@
     {
       "type": "patchouli:text",
       "text": "hexmob.book.hexmob.iota_sheep.1"
+    },
+    {
+      "type": "patchouli:entity",
+      "entity": "hexmob:iota_sheep",
+      "text": "hexmob.book.hexmob.iota_sheep.2"
     }
   ]
 }

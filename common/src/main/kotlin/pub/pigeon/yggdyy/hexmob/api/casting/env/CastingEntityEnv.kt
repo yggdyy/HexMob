@@ -30,4 +30,11 @@ class CastingEntityEnv(
 
     override fun extractMediaEnvironment(cost: Long, simulate: Boolean): Long =
         castingEntity.consumeMedia(cost, simulate)
+
+    /**
+     * The entity decides its own enlightenment (the base env only grants it to
+     * players with the advancement). QuenchAllay overrides
+     * [CastingEntity.isEnlightened] to true so it can cast great spells.
+     */
+    override fun isEnlightened(): Boolean = castingEntity.isEnlightened()
 }

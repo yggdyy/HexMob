@@ -1,0 +1,22 @@
+{
+  "name": "hexmob.book.hexmob.crystal_spikes",
+  "category": "hexcasting:hexmob",
+  "icon": "minecraft:amethyst_block",
+  "sortnum": 1,
+  "advancement": "hexcasting:crystal_spikes",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "hexmob.book.hexmob.crystal_spikes.0"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "hexmob.book.hexmob.crystal_spikes.1"
+    },
+    {
+      "type": "patchouli:entity",
+      "entity": "hexmob:guard_brute",
+      "text": "hexmob.book.hexmob.crystal_spikes.2"
+    }
+  ]
+}

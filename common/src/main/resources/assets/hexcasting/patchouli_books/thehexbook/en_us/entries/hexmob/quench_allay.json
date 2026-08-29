@@ -1,0 +1,22 @@
+{
+  "name": "hexmob.book.hexmob.quench_allay",
+  "category": "hexcasting:hexmob",
+  "icon": "hexmob:quench_allay_spawn_egg",
+  "entry_color": "54398a",
+  "advancement": "hexcasting:enlightenment",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "hexmob.book.hexmob.quench_allay.0"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "hexmob.book.hexmob.quench_allay.1"
+    },
+    {
+      "type": "patchouli:entity",
+      "entity": "hexmob:quench_allay",
+      "text": "hexmob.book.hexmob.quench_allay.2"
+    }
+  ]
+}

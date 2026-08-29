@@ -1,0 +1,14 @@
+{
+  "structures": [
+    {
+      "structure": "hexmob:ur_circle_arena",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 60,
+    "separation": 30,
+    "salt": 2043300427
+  }
+}
