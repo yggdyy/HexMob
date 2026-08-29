@@ -97,7 +97,8 @@
     "hexmob": {
       "duplicate_stimulated_slate": "Encountered duplicate stimulated slate pattern!",
       "flickering_entity": "It should have accepted an entity, but accepted nothing.",
-      "ur_circle_flickering": "It should have accepted an entity, but instead accepted Nature itself."
+      "ur_circle_flickering": "It should have accepted an entity, but instead accepted Nature itself.",
+      "circle": "This pattern seems useful, but I can't use it."
     }
   },
   text: {

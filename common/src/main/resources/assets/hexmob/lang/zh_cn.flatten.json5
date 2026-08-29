@@ -79,7 +79,8 @@
     "hexmob": {
       "duplicate_stimulated_slate": "法术环中出现两块笔迹相同的活化石板！",
       "flickering_entity": "本应接受一个实体，却什么也没有接受。",
-      "ur_circle_flickering": "本应接受一个实体，而实际上接受了自然本身。"
+      "ur_circle_flickering": "本应接受一个实体，而实际上接受了自然本身。",
+      "circle": "这个图案似乎有用，但我用不了"
     }
   },
   "entity": {
