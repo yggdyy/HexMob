@@ -3,6 +3,7 @@ package pub.pigeon.yggdyy.hexmob.content.ur_circle.ur_spell
 import at.petrak.hexcasting.api.casting.RenderedSpell
 import at.petrak.hexcasting.api.casting.eval.CastingEnvironment
 import at.petrak.hexcasting.api.casting.iota.Iota
+import at.petrak.hexcasting.api.misc.MediaConstants
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.level.block.Blocks
 import pub.pigeon.yggdyy.hexmob.api.casting.actions.UrCircleSpell
@@ -14,7 +15,7 @@ import pub.pigeon.yggdyy.hexmob.api.casting.actions.UrCircleSpell
 class AmethystTrapSpell : UrCircleSpell() {
     override val argc: Int get() = 1
 
-    override fun cost(args: List<Iota>, env: CastingEnvironment): Long = 30L
+    override fun cost(args: List<Iota>, env: CastingEnvironment): Long = MediaConstants.SHARD_UNIT
 
     override fun makeEffect(args: List<Iota>, env: CastingEnvironment): RenderedSpell =
         Spell(livingTarget(args, env))

@@ -7,6 +7,7 @@ import at.petrak.hexcasting.api.casting.iota.Iota
 import at.petrak.hexcasting.api.casting.math.HexDir
 import at.petrak.hexcasting.api.casting.math.HexPattern
 import at.petrak.hexcasting.api.casting.mishaps.MishapBadLocation
+import at.petrak.hexcasting.api.misc.MediaConstants
 import net.minecraft.world.phys.Vec3
 import pub.pigeon.yggdyy.hexmob.api.casting.actions.UrCircleSpell
 import pub.pigeon.yggdyy.hexmob.content.ur_circle.SlateProjectile
@@ -22,7 +23,7 @@ import pub.pigeon.yggdyy.hexmob.registry.HexMobEntities
 class SlateProjectileSpell : UrCircleSpell() {
     override val argc: Int get() = 2
 
-    override fun cost(args: List<Iota>, env: CastingEnvironment): Long = 35L
+    override fun cost(args: List<Iota>, env: CastingEnvironment): Long = MediaConstants.DUST_UNIT*3
 
     override fun makeEffect(args: List<Iota>, env: CastingEnvironment): RenderedSpell {
         val pos = args.getVec3(0, argc)
@@ -48,8 +49,8 @@ class SlateProjectileSpell : UrCircleSpell() {
     }
 
     companion object {
-        /** 一次齐射几枚。 */
-        const val SHOTS = 3
+        /** 一次射出的石板弹数量（玩家版只射一枚）。 */
+        const val SHOTS = 1
         /** 飞行速度（照大环 SLATE_SPEED）。 */
         const val SPEED = 1.0F
         /** 射击散布（照大环）。 */

@@ -15,6 +15,7 @@ import pub.pigeon.yggdyy.hexmob.content.ur_circle.UrCircleEntity
 import pub.pigeon.yggdyy.hexmob.content.ur_circle.SlateProjectile
 import pub.pigeon.yggdyy.hexmob.content.ur_circle.serpent.UrCircleSerpent
 import pub.pigeon.yggdyy.hexmob.content.ur_circle.servant.UrCircleServant
+import pub.pigeon.yggdyy.hexmob.content.ur_circle.ur_spell.UrCoreBeamEntity
 import pub.pigeon.yggdyy.hexmob.content.guard.GuardArcher
 import pub.pigeon.yggdyy.hexmob.content.guard.GuardBrute
 import pub.pigeon.yggdyy.hexmob.content.guard.GuardGolem
@@ -72,6 +73,14 @@ object HexMobEntities {
             { type, level -> UrCircleSerpent(type, level) },
             MobCategory.MISC
         ).sized(0.9F, 0.9F).build("ur_circle_serpent")
+    }
+    val UR_CORE_BEAM: DeferredSupplier<EntityType<UrCoreBeamEntity>> = ENTITIES.register("ur_core_beam") {
+        // 尺寸必须非零：原版 shouldRenderAtSqrDistance 用包围盒体积*64 算渲染距离，
+        // 0 体积 → 永不渲染（光束就是因此看不见的）。照末影水晶用 2×2。
+        EntityType.Builder.of(
+            { type, level -> UrCoreBeamEntity(type, level) },
+            MobCategory.MISC
+        ).sized(2F, 2F).build("ur_core_beam")
     }
     val UR_CIRCLE_SERVANT: DeferredSupplier<EntityType<UrCircleServant>> = ENTITIES.register("ur_circle_servant") {
         EntityType.Builder.of(

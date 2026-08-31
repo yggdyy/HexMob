@@ -1,0 +1,37 @@
+{
+  "parent": "hexcasting:root",
+  "display": {
+    "icon": {
+      "item": "hexmob:ur_circle_core"
+    },
+    "title": {
+      "translate": "advancements.hexmob.ur_circle_core.title"
+    },
+    "description": {
+      "translate": "advancements.hexmob.ur_circle_core.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "got_core": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "hexmob:ur_circle_core"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "got_core"
+    ]
+  ]
+}

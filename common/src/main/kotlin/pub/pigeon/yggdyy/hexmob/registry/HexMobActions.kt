@@ -32,13 +32,13 @@ object HexMobActions : HexMobRegistrar<ActionRegistryEntry>(
     // 填法参考上方：笔顺字母串 + 起始方向（HexDir），字母表见 at.petrak.hexcasting.api.casting.math.HexDirection
     // （a/e/w/q 表示线条方向，q 还表示转折点）。空笔顺可注册但无实际图案，填好前请勿在游戏内画它。
 
-    val UR_AMETHYST_TRAP = make("ur_amethyst_trap", HexDir.EAST, "", AmethystTrapSpell())
+    val UR_AMETHYST_TRAP = make("ur_amethyst_trap", HexDir.WEST, "qwqwqqwqwaqew", AmethystTrapSpell())
 
-    val UR_BEAM = make("ur_beam", HexDir.SOUTH_EAST, "", BeamSpell())
+    val UR_BEAM = make("ur_beam", HexDir.EAST, "wqwqwqwqwqwaeqqqaqw", BeamSpell())
 
-    val UR_SERPENT = make("ur_serpent", HexDir.SOUTH_WEST, "", SerpentSpell())
+    val UR_SERPENT = make("ur_serpent", HexDir.SOUTH_EAST, "dewdedweaaewqaqwaq", SerpentSpell())
 
-    val UR_SLATE_PROJECTILE = make("ur_slate_projectile", HexDir.WEST, "", SlateProjectileSpell())
+    val UR_SLATE_PROJECTILE = make("ur_slate_projectile", HexDir.WEST, "qwqwqaeqedwew", SlateProjectileSpell())
 
     private fun make(name: String, startDir: HexDir, signature: String, action: Action) =
         make(name, startDir, signature) { action }

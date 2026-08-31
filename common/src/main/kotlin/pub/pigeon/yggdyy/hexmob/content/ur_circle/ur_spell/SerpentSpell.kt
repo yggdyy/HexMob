@@ -1,10 +1,12 @@
 package pub.pigeon.yggdyy.hexmob.content.ur_circle.ur_spell
 
 import at.petrak.hexcasting.api.casting.RenderedSpell
+import at.petrak.hexcasting.api.casting.castables.ConstMediaAction
 import at.petrak.hexcasting.api.casting.eval.CastingEnvironment
 import at.petrak.hexcasting.api.casting.getVec3
 import at.petrak.hexcasting.api.casting.iota.Iota
 import at.petrak.hexcasting.api.casting.mishaps.MishapBadLocation
+import at.petrak.hexcasting.api.misc.MediaConstants
 import net.minecraft.world.phys.Vec3
 import pub.pigeon.yggdyy.hexmob.api.casting.actions.UrCircleSpell
 import pub.pigeon.yggdyy.hexmob.content.ur_circle.serpent.UrCircleSerpent
@@ -24,7 +26,7 @@ import kotlin.math.sin
 class SerpentSpell : UrCircleSpell() {
     override val argc: Int get() = 2
 
-    override fun cost(args: List<Iota>, env: CastingEnvironment): Long = 45L
+    override fun cost(args: List<Iota>, env: CastingEnvironment): Long = MediaConstants.SHARD_UNIT
 
     override fun makeEffect(args: List<Iota>, env: CastingEnvironment): RenderedSpell {
         val pos = args.getVec3(0, argc)
