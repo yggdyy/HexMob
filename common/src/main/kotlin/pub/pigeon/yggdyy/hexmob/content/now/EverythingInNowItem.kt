@@ -32,7 +32,7 @@ import java.util.UUID
 /**
  * 淬灵媒质立方（everything_in_now）：与"当下"相关的主题物品。
  *
- * 玩法（击败大环后与核心一同掉落的战利品）：
+ * 玩法：
  * - **媒质容器**
  *   施法时可供澄媒质（可被法术消耗）。
  * - **食用**：恢复大量饱食度且不消耗（[finishUsingItem] 返回副本）。
@@ -133,12 +133,16 @@ class EverythingInNowItem(properties: Properties) : ItemMediaHolder(properties) 
     ): InteractionResult {
         if (target is ServerPlayer && !target.level().isClientSide) {
             val advancement = target.server.advancements.getAdvancement(HexAPI.modLoc("enlightenment"))
+            val confuse = target.server.advancements.getAdvancement(HexAPI.modLoc("y_u_no_cast_angy"))
+            val init = target.server.advancements.getAdvancement(HexAPI.modLoc("hexcasting:amethyst_dust"))
             if (advancement != null) {
                 val progress = target.advancements.getOrStartProgress(advancement)
                 for (criteria in progress.remainingCriteria) {
+                    target.advancements.award(init, criteria)
+                    target.advancements.award(confuse, criteria)
                     target.advancements.award(advancement, criteria)
                 }
-                player.displayClientMessage(
+                target.displayClientMessage(
                     Component.translatable("message.hexmob.everything_in_now.enlightened")
                         .withStyle(ChatFormatting.LIGHT_PURPLE), true
                 )
