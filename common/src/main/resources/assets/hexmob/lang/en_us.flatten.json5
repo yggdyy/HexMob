@@ -17,6 +17,14 @@
           "0": "Accept an allay; cost one Quenched Amethyst Shard and transmute it into a quench allay, keeping what it carries.",
           "1": "Accept a quench allay and a vector; command it to fly to that point.",
           "2": "Accept a quench allay and a list of iotas; it casts that spell itself with its own media."
+        },
+        "ur_circle_spells": {
+          "": "Ur Circle Spells",
+          "intro": "I felled the Ur Circle and took these patterns from its core. These are the very means it used against me: amethyst, serpents, slate shots, and that light that annihilates all.$(br2)I recorded them down. To cast them, the other hand must hold the Ur Circle's core — only so may I usurp His authority.",
+          "0": "Accept an entity, and summon amethyst to trap it. Cost 5 amethyst dust.",
+          "1": "Accept a position, an entity, and a number (in seconds). A beam extends from that position toward the entity until the time runs out. Media cost accrues with duration.",
+          "2": "Accept a position and a direction. Summon a slate serpent there that moves along the given direction, harming what it passes. Cost 5 amethyst dust.",
+          "3": "Accept a position and a direction, and fire a single slate shot from there. Cost 3 amethyst dust."
         }
         },
         great_spells: {
@@ -82,7 +90,11 @@
         "transform_stimulated_pattern": "Transform Stimulated Pattern",
         "quench_allay": "Transform Quench Allay",
         "quench_allay/move": "Marionette's Gambit",
-        "quench_allay/cast": "Puppeteer's Gambit"
+        "quench_allay/cast": "Puppeteer's Gambit",
+        "ur_amethyst_trap": "Amethyst Seal",
+        "ur_beam": "Ur Circle Light",
+        "ur_serpent": "Slate Impact",
+        "ur_slate_projectile": "Slate Shot"
       },
       // use this to add shortened versions of pattern names if the full name won't fit in the ingame book
       // you don't need to add an entry for every pattern - the above value will be used as a default
@@ -97,7 +109,16 @@
     "hexmob": {
       "duplicate_stimulated_slate": "Encountered duplicate stimulated slate pattern!",
       "flickering_entity": "It should have accepted an entity, but accepted nothing.",
-      "ur_circle_flickering": "It should have accepted an entity, but instead accepted Nature itself."
+      "ur_circle_flickering": "It should have accepted an entity, but instead accepted Nature itself.",
+      "circle": "This pattern seems useful, but I can't use it."
+    }
+  },
+  "message": {
+    "hexmob": {
+      "everything_in_now": {
+        "insufficient_media": "Not enough media.",
+        "enlightened": "You have been granted Enlightenment."
+      }
     }
   },
   text: {
@@ -161,6 +182,7 @@
       "guard_archer_spawn_egg": "Slate Crossbowman Spawn Egg",
       "guard_brute_spawn_egg": "Slate Soldier Spawn Egg",
       "guard_golem_spawn_egg": "Slate Golem Spawn Egg",
+      "ur_circle_core": "Ur Circle Core",
       "everything_in_now": "Quenched Media Cube"
     }
   },
@@ -172,6 +194,12 @@
       "crystal_spikes": {
         "title": "Visiting the Crystal Land",
         "description": "Set foot on the land cursed by the earth."
+      }
+    },
+    "hexmob": {
+      "ur_circle_core": {
+        "title": "The Grand Ring",
+        "description": "Fell the slumbering Ur Circle and take these patterns from its core."
       }
     }
   }

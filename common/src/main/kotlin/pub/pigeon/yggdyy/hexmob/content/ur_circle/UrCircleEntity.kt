@@ -45,6 +45,7 @@ import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
+import pub.pigeon.yggdyy.hexmob.content.ur_circle.ur_spell.UrCoreBeamEntity
 import org.joml.Vector3f
 import pub.pigeon.yggdyy.hexmob.HexMob
 import pub.pigeon.yggdyy.hexmob.api.entity.FlickeringEntity
@@ -201,6 +202,9 @@ class UrCircleEntity(entityType: EntityType<out Mob>, level: Level) : Mob(entity
     private var currentSkill: UrCircleSkill? = null
     /** 当前正在释放光束的技能（BEAM 状态）。 */
     var beamSkill: UrCircleSkill? = null
+    /** 光束载体实体（隐藏，仅渲染）：大环核心光线也复用 ur_beam 的末影水晶链接光束观感。
+     *  仅服务端瞬态，生命周期随 BEAM 状态管理（见 [syncCircleBeam]/[discardCircleBeam]）。 */
+    private var circleBeamEntity: UrCoreBeamEntity? = null
     /** 吟唱音效脉冲计时。 */
     private var channelPulseTimer = 0
     /** 吟唱粒子脉冲计时（每几 tick 一波）。 */
@@ -581,6 +585,7 @@ class UrCircleEntity(entityType: EntityType<out Mob>, level: Level) : Mob(entity
         }
     }
     override fun remove(reason: Entity.RemovalReason) {
+        discardCircleBeam()
         bossEvent?.removeAllPlayers()
         super.remove(reason)
     }
@@ -592,6 +597,7 @@ class UrCircleEntity(entityType: EntityType<out Mob>, level: Level) : Mob(entity
         stateTicks = 0
         currentSkill = null
         beamSkill = null
+        discardCircleBeam()
         bossEvent?.removeAllPlayers()
         bossEvent = null
         // 下属立即退场（不触 5 点反噬，避免死亡时连环扣血）
@@ -730,13 +736,16 @@ class UrCircleEntity(entityType: EntityType<out Mob>, level: Level) : Mob(entity
                 // 光束持续状态（第 4 步光炮）：cast() 调用 beginBeam 切入，每 tick 驱动技能
                 val skill = beamSkill
                 if (skill == null) {
+                    discardCircleBeam()
                     circleState = CircleState.CRUISE
                     stateTicks = 0
                 } else {
                     skill.onBeamTick(this)
+                    syncCircleBeam()
                     if (stateTicks >= skill.beamTicks(this)) {
                         skill.onBeamEnd(this)
                         beamSkill = null
+                        discardCircleBeam()
                         circleState = CircleState.CRUISE
                         stateTicks = 0
                     }
@@ -1030,6 +1039,7 @@ class UrCircleEntity(entityType: EntityType<out Mob>, level: Level) : Mob(entity
             CircleState.BEAM -> { beamSkill = null }
             else -> return
         }
+        discardCircleBeam()
         circleState = CircleState.CRUISE
         stateTicks = 0
         skillCooldown = SKILL_COOLDOWN
@@ -1040,6 +1050,40 @@ class UrCircleEntity(entityType: EntityType<out Mob>, level: Level) : Mob(entity
         beamSkill = skill
         circleState = CircleState.BEAM
         stateTicks = 0
+        syncCircleBeam()
+    }
+
+    /**
+     * 同步大环的光束载体实体（服务端瞬态，复刻 ur_beam 的末影水晶链接光束观感）：
+     * 光束起点 = 核心位置（[beamOrigin]），终点 = 目标身体中心（跟随目标移动）。
+     * BEAM 状态每 tick 由 [combatBrain] 调用；实体不存在（初次进入/被打断后重进）时创建。
+     */
+    private fun syncCircleBeam() {
+        if (level().isClientSide) return
+        val level = level() as ServerLevel
+        var entity = circleBeamEntity
+        val origin = beamOrigin()
+        val end = target?.let { t ->
+            if (t.isAlive) t.position().add(0.0, t.bbHeight / 2.0, 0.0) else origin
+        } ?: origin
+        if (entity == null || !entity.isAlive) {
+            entity = UrCoreBeamEntity(HexMobEntities.UR_CORE_BEAM.get(), level)
+            entity.setPos(origin.x, origin.y, origin.z)
+            entity.setBeamTarget(end)
+            level.addFreshEntity(entity)
+            circleBeamEntity = entity
+        } else {
+            entity.setPos(origin.x, origin.y, origin.z)
+            entity.setBeamTarget(end)
+        }
+    }
+
+    /** 销毁大环的光束载体实体（结束/打断/死亡统一调用，幂等）。 */
+    private fun discardCircleBeam() {
+        circleBeamEntity?.let {
+            if (it.isAlive || it.level().isClientSide) it.discard()
+        }
+        circleBeamEntity = null
     }
 
     /** 光束起点：核心（earth）位置，未就位时退回大环中心。 */

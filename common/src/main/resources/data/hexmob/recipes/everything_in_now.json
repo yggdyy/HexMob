@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "qqq",
+    "qcq",
+    "qqq"
+  ],
+  "key": {
+    "q": {
+      "item": "hexcasting:quenched_allay"
+    },
+    "c": {
+      "item": "hexmob:ur_circle_core"
+    }
+  },
+  "result": {
+    "item": "hexmob:everything_in_now",
+    "count": 1,
+    "nbt": "{\"hexcasting:media\":76800000,\"hexcasting:start_media\":76800000}"
+  }
+}

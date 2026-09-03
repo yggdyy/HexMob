@@ -14,6 +14,14 @@
           "": "转化活化图案",
           "0": "接受一块$(l:hexcasting:items/stimulated_slate)活化石板$(/l)的位置、一只$(l:hexcasting:hexmob/stimulated_pattern)活化图案实体$(/l)与一个图案。尝试将活化图案实体转化为活化石板。消耗 10 紫水晶粉。",
           "1": "如果给出的图案与活化图案实体所持图案笔迹相同，该实体便会就此散尽，活化石板则被写入这一图案；否则实体将失去 5 点生命值，再无他事发生。"
+        },
+        "ur_circle_spells": {
+          "": "大环法术",
+          "intro": "我击溃了那大环，从它的核心中得到了这些图案。它袭击我时用的正是这些手段：紫水晶、长蛇、石板弹，还有那道灭杀一切的光。$(br2)我把它们记录了下来。施放这些图案时，另一只手必须握着大环的核心，如此，才能冒用祂的权柄。",
+          "0": "接受一个实体，召唤紫水晶将其困住。消耗 5 紫水晶粉。",
+          "1": "接受一个位置、一个实体与一个数字（秒），自该位置向该实体放出光束，直至时限耗尽。消耗媒质随持续时长累积。",
+          "2": "接受一个位置与一个方向。在那个位置召唤板岩长蛇，沿所给方向移动，沿途造成伤害。消耗 5 紫水晶粉。",
+          "3": "接受一个位置与一个方向，自该处射出一枚石板弹。消耗 3 紫水晶粉。"
         }
         }
       },
@@ -71,7 +79,11 @@
         "transform_stimulated_pattern": "转化活化图案",
         "quench_allay": "转化淬晶悦灵",
         "quench_allay/move": "提线木偶之策略",
-        "quench_allay/cast": "傀儡师之策略"
+        "quench_allay/cast": "傀儡师之策略",
+        "ur_amethyst_trap": "紫水晶封锁",
+        "ur_beam": "大环之光",
+        "ur_serpent": "板岩冲击",
+        "ur_slate_projectile": "石板弹"
       }
     }
   },
@@ -79,7 +91,16 @@
     "hexmob": {
       "duplicate_stimulated_slate": "法术环中出现两块笔迹相同的活化石板！",
       "flickering_entity": "本应接受一个实体，却什么也没有接受。",
-      "ur_circle_flickering": "本应接受一个实体，而实际上接受了自然本身。"
+      "ur_circle_flickering": "本应接受一个实体，而实际上接受了自然本身。",
+      "circle": "这个图案似乎有用，但我用不了"
+    }
+  },
+  "message": {
+    "hexmob": {
+      "everything_in_now": {
+        "insufficient_media": "媒质不足。",
+        "enlightened": "你已被授予启迪。"
+      }
     }
   },
   "entity": {
@@ -105,6 +126,7 @@
       "guard_archer_spawn_egg": "板岩弩手刷怪蛋",
       "guard_brute_spawn_egg": "板岩兵刷怪蛋",
       "guard_golem_spawn_egg": "板岩傀儡刷怪蛋",
+      "ur_circle_core": "大环核心",
       "everything_in_now": "淬灵媒质立方"
     }
   },
@@ -128,6 +150,12 @@
       "crystal_spikes": {
         "title": "探访结晶之地",
         "description": "踏足那片被大地所诅咒的土地。"
+      }
+    },
+    "hexmob": {
+      "ur_circle_core": {
+        "title": "卓伟回环",
+        "description": "击溃那沉睡的大环，从它的核心中取出这些图案。"
       }
     }
   }
