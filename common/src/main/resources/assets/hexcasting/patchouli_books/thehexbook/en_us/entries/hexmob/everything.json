@@ -1,0 +1,15 @@
+{
+  "name": "hexmob.book.hexmob.everything",
+  "category": "hexcasting:hexmob",
+  "icon": "hexmob:everything_in_now",
+  "sortnum": 10,
+  "advancement": "hexmob:ur_circle_core",
+  "pages": [
+    {
+      "type": "patchouli:crafting",
+      "recipe": "hexmob:everything_in_now",
+      "text": "hexmob.book.hexmob.everything.0"
+    },
+    "hexmob.book.hexmob.everything.1"
+  ]
+}

@@ -17,6 +17,14 @@
           "0": "Accept an allay; cost one Quenched Amethyst Shard and transmute it into a quench allay, keeping what it carries.",
           "1": "Accept a quench allay and a vector; command it to fly to that point.",
           "2": "Accept a quench allay and a list of iotas; it casts that spell itself with its own media."
+        },
+        "ur_circle_spells": {
+          "": "Ur Circle Spells",
+          "intro": "I felled the Ur Circle and took these patterns from its core. These are the very means it used against me: amethyst, serpents, slate shots, and that light that annihilates all.$(br2)I recorded them down. To cast them, the other hand must hold the Ur Circle's core — only so may I usurp His authority.",
+          "0": "Accept an entity, and summon amethyst to trap it. Cost 5 amethyst dust.",
+          "1": "Accept a position, an entity, and a number (in seconds). A beam extends from that position toward the entity until the time runs out. Media cost accrues with duration.",
+          "2": "Accept a position and a direction. Summon a slate serpent there that moves along the given direction, harming what it passes. Cost 5 amethyst dust.",
+          "3": "Accept a position and a direction, and fire a single slate shot from there. Cost 3 amethyst dust."
         }
         },
         great_spells: {
@@ -66,10 +74,13 @@
         "ur_circle": {
           "": "Ur Circle",
           "0": "\u201cThe reflection of supreme authority in reality, the earthly manifestation of eternal glory — life, death, the whole of this present moment, yet far from the whole of this world; the Great Work wrought by sages of old, a creation equal to the veil spanning the heart of the mind, formed by human hands yet long inscribed in the grand blueprint.$(br2)Bloom, bloom, bloom the eternal glory.",
-          "1": "It brings neither hope nor an ending; a grail filled with the blood of the self-existent, bearing every good of this world, receiving every evil of this world — the miracle that creates miracles! The Great Ring!\u201d — in the great enlightenment I heard this hymn, and I have wondered more than once what it exalts. Now, I know.",
+          "1": "It brings neither hope nor an ending; a grail filled with the blood of the HE-IS-WHO-HE-IS, bearing every good of this world, receiving every evil of this world — the miracle that creates miracles! The Great Circle!\u201d — in the great enlightenment I heard this hymn, and I have wondered more than once what it exalts. Now, I know.",
           "2": "Deep in the Crystal Land, upon a floating altar, I met the very thing the hymn exalts. It slept in mid-air like a forgotten star.$(br2)It wakes as you draw near — great stones dance in the air; it hurls slate, rends the earth, and looses beams of light, while attendants gather about it. Projectiles and explosions barely touch it, and entity iotas fail against it in the strangest way.",
           "3": "It is as though exalted knowledge itself were flaunting its power in pride. To common eyes it is but an ornate tower of slate and amethyst — yet as the \"reflection of authority\", something about this very hour and its world must yet hide a secret. Someday I shall learn what it is. Perhaps it will begin with defeating it?"
-        }
+        },
+        "": "Quenched Media Cube",
+        "0": "With the power of the Shard of Quenched Allay, the Ur Circle's core is set free.",
+        "1": "In itself, the Quenched Media Cube holds media the way a phial of the greatest capacity does. And because of the Shard of Quenched Allay's shifting nature, I can draw the media it stores out in whatever crystalline form I please, at any moment: hold the crystalline media in the off hand and $(k:sneak)$-use on empty air.$(br2)Beyond that, the Quenched Media Cube keeps the Ur Circle Core's own function — and can even be eaten without end."
       }
     },
   },
@@ -82,7 +93,11 @@
         "transform_stimulated_pattern": "Transform Stimulated Pattern",
         "quench_allay": "Transform Quench Allay",
         "quench_allay/move": "Marionette's Gambit",
-        "quench_allay/cast": "Puppeteer's Gambit"
+        "quench_allay/cast": "Puppeteer's Gambit",
+        "ur_amethyst_trap": "Amethyst Seal",
+        "ur_beam": "Ur Circle Light",
+        "ur_serpent": "Slate Impact",
+        "ur_slate_projectile": "Slate Shot"
       },
       // use this to add shortened versions of pattern names if the full name won't fit in the ingame book
       // you don't need to add an entry for every pattern - the above value will be used as a default
@@ -97,7 +112,16 @@
     "hexmob": {
       "duplicate_stimulated_slate": "Encountered duplicate stimulated slate pattern!",
       "flickering_entity": "It should have accepted an entity, but accepted nothing.",
-      "ur_circle_flickering": "It should have accepted an entity, but instead accepted Nature itself."
+      "ur_circle_flickering": "It should have accepted an entity, but instead accepted Nature itself.",
+      "circle": "This pattern seems useful, but I can't use it."
+    }
+  },
+  "message": {
+    "hexmob": {
+      "everything_in_now": {
+        "insufficient_media": "Not enough media.",
+        "enlightened": "You have been granted Enlightenment."
+      }
     }
   },
   text: {
@@ -161,6 +185,7 @@
       "guard_archer_spawn_egg": "Slate Crossbowman Spawn Egg",
       "guard_brute_spawn_egg": "Slate Soldier Spawn Egg",
       "guard_golem_spawn_egg": "Slate Golem Spawn Egg",
+      "ur_circle_core": "Ur Circle Core",
       "everything_in_now": "Quenched Media Cube"
     }
   },
@@ -172,6 +197,12 @@
       "crystal_spikes": {
         "title": "Visiting the Crystal Land",
         "description": "Set foot on the land cursed by the earth."
+      }
+    },
+    "hexmob": {
+      "ur_circle_core": {
+        "title": "The Grand Ring",
+        "description": "Fell the slumbering Ur Circle and take these patterns from its core."
       }
     }
   }

@@ -1,0 +1,41 @@
+{
+  "name": "hexmob.book.patterns.spells.ur_circle_spells",
+  "category": "hexcasting:patterns/spells",
+  "icon": "hexmob:ur_circle_core",
+  "entry_color": "54398a",
+  "advancement": "hexmob:ur_circle_core",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "hexmob.book.patterns.spells.ur_circle_spells.intro"
+    },
+    {
+      "type": "hexcasting:pattern",
+      "op_id": "hexmob:ur_amethyst_trap",
+      "input": "entity",
+      "output": "",
+      "text": "hexmob.book.patterns.spells.ur_circle_spells.0"
+    },
+    {
+      "type": "hexcasting:pattern",
+      "op_id": "hexmob:ur_beam",
+      "input": "vector, entity, number",
+      "output": "",
+      "text": "hexmob.book.patterns.spells.ur_circle_spells.1"
+    },
+    {
+      "type": "hexcasting:pattern",
+      "op_id": "hexmob:ur_serpent",
+      "input": "vector, vector",
+      "output": "",
+      "text": "hexmob.book.patterns.spells.ur_circle_spells.2"
+    },
+    {
+      "type": "hexcasting:pattern",
+      "op_id": "hexmob:ur_slate_projectile",
+      "input": "vector, vector",
+      "output": "",
+      "text": "hexmob.book.patterns.spells.ur_circle_spells.3"
+    }
+  ]
+}
